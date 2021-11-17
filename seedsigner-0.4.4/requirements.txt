@@ -1,0 +1,9 @@
+embit==0.4.5
+numpy==1.21.1
+picamera==1.13
+Pillow==8.2.0
+pyzbar==0.1.8
+qrcode==6.1
+RPi.GPIO==0.7.0
+six==1.16.0
+spidev==3.5
