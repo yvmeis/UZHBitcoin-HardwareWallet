@@ -1,16 +1,5 @@
 import os, binascii, secrets, hashlib
 
-def generate_entropy():
-    hexstring = binascii.b2a_hex(os.urandom(16))
-    return hexstring
-    
-
-def generate_recovery_phrases(hexstring):
-    phrases = bip39.mnemonic_from_bytes(hexstring)
-
-
-
-################################################################
 
 #length between 128 and 256. length has to be divisible by 32
 def gen_entropy(length):
