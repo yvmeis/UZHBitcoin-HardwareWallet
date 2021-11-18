@@ -25,5 +25,20 @@ def find_words(binary):
         phrase.append(words[int(binary[x:x+11], 2)].rstrip())
     print(phrase)
 
+def gen_seed(mnemonic_bytes, passphrase = ''):
+    # The passphrase is a phrase the user should be able to choose in order to make things more secure!
+    password = mnemonic_bytes
+    salt = 'mnemonic' + passphrase
+    iterations = 2048
+    seed = hashlib.pbkdf2_hmac('sha512',password,salt,iterations)
+    return seed
 
 find_words(hash_entropy(gen_entropy(128), 128))
+
+
+################################################################################################
+#########################################tests##################################################
+################################################################################################
+
+ma_seed = gen_seed('c55257c360c07c72029aebc1b53c05ed0362ada38ead3e3e9efa3708e53495531f09a6987599d18264c1e1c92f2cf141630c7a3c4ab7c81b2f001698e7463b04')
+print (ma_seed)
