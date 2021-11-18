@@ -1,4 +1,5 @@
 import os, binascii, secrets, hashlib, sys, unicodedata
+from typing import AnyStr
 
 #length between 128 and 256. length has to be divisible by 32
 def gen_entropy(length):
@@ -32,18 +33,31 @@ def find_words(binary):
         phrase.append(words[int(binary[x:x+11], 2)].rstrip())
         print(int(binary[x:x+11],2))
     print(phrase)
+    return phrase
 
-def gen_seed(mnemonic_bytes, passphrase = 'TREZOR'):
-    # The passphrase is a phrase the user should be able to choose in order to make things more secure!
-    password = mnemonic_bytes.hex()
-    password = unicodedata.normalize('NFKD', password)
+def gen_seed(words, passphrase = ''):
+    sentence = ''
+    for ele in words:
+        sentence += ele
+        
+    password = normalize_string(sentence)
+    passphrase = normalize_string(passphrase)
     salt = 'mnemonic' + passphrase
-    salt = unicodedata.normalize('NFKD', salt)
     iterations = 2048
     salt = salt.encode('utf-8')
     password = password.encode('utf-8')
-    seed = hashlib.pbkdf2_hmac('sha512',password,salt,iterations)
-    return seed
+    seed = hashlib.pbkdf2_hmac('sha512', password, salt, iterations)
+    return seed[:64]
+
+def normalize_string(txt: AnyStr) -> str:
+        if isinstance(txt, bytes):
+            utxt = txt.decode("utf8")
+        elif isinstance(txt, str):
+            utxt = txt
+        else:
+            raise TypeError("String value expected")
+
+        return unicodedata.normalize("NFKD", utxt)
      
 find_words(hash_entropy(gen_entropy(128), 128))
 
@@ -52,5 +66,5 @@ find_words(hash_entropy(gen_entropy(128), 128))
 #########################################tests##################################################
 ################################################################################################
 
-ma_seed = gen_seed(bytes.fromhex('c55257c360c07c72029aebc1b53c05ed0362ada38ead3e3e9efa3708e53495531f09a6987599d18264c1e1c92f2cf141630c7a3c4ab7c81b2f001698e7463b04'))
+ma_seed = gen_seed(find_words(hash_entropy(gen_entropy(128), 128)))
 print (ma_seed.hex())
