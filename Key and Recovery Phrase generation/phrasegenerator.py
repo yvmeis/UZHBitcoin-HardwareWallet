@@ -1,5 +1,4 @@
 import os, binascii, secrets, hashlib, sys, unicodedata
-from typing import AnyStr
 
 #length between 128 and 256. length has to be divisible by 32
 def gen_entropy(length):
@@ -46,5 +45,5 @@ find_words(hash_entropy(gen_entropy(128), 128))
 ################################################################################################
 
 ma_seed = gen_seed(b'c55257c360c07c72029aebc1b53c05ed0362ada38ead3e3e9efa3708e53495531f09a6987599d18264c1e1c92f2cf141630c7a3c4ab7c81b2f001698e7463b04')
-ma_seed.decode('utf-8')
+#ma_seed.decode('utf-8')
 print (ma_seed)
