@@ -36,10 +36,8 @@ def find_words(binary):
     return phrase
 
 def gen_seed(words, passphrase = ''):
-    sentence = ''
-    for ele in words:
-        sentence += ele
-        
+    sentence = " ".join(words)
+    print(sentence)    
     password = normalize_string(sentence)
     passphrase = normalize_string(passphrase)
     salt = 'mnemonic' + passphrase
@@ -67,4 +65,5 @@ find_words(hash_entropy(gen_entropy(128), 128))
 ################################################################################################
 
 ma_seed = gen_seed(find_words(hash_entropy(gen_entropy(128), 128)))
+print()
 print (ma_seed.hex())
