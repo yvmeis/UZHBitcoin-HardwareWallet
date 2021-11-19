@@ -56,14 +56,21 @@ def normalize_string(txt: AnyStr) -> str:
             raise TypeError("String value expected")
 
         return unicodedata.normalize("NFKD", utxt)
-     
-find_words(hash_entropy(gen_entropy(128), 128))
+
+def main():
+    find_words(hash_entropy(gen_entropy(128), 128))
 
 
 ################################################################################################
 #########################################tests##################################################
 ################################################################################################
 
-ma_seed = gen_seed(find_words(hash_entropy(gen_entropy(128), 128)))
-print()
-print (ma_seed.hex())
+    ma_seed = gen_seed(find_words(hash_entropy(gen_entropy(128), 128)))
+    print()
+    print (ma_seed.hex())
+    
+
+if __name__ == "__main__":
+   # stuff only to run when not called via 'import' here
+   main()
+     
