@@ -31,8 +31,8 @@ def find_words(binary):
     file.close()
     for x in range(0, len(binary), 11):
         phrase.append(words[int(binary[x:x+11], 2)].rstrip())
-        print(int(binary[x:x+11],2))
-    print(phrase)
+        #print(int(binary[x:x+11],2))
+    #print(phrase)
     return phrase
 
 def gen_seed(words, passphrase = ''):
@@ -59,15 +59,9 @@ def normalize_string(txt: AnyStr) -> str:
 
 def main():
     find_words(hash_entropy(gen_entropy(128), 128))
-
-
-################################################################################################
-#########################################tests##################################################
-################################################################################################
-
     ma_seed = gen_seed(find_words(hash_entropy(gen_entropy(128), 128)))
     print()
-    print (ma_seed.hex())
+    print(ma_seed.hex())
     
 
 if __name__ == "__main__":
