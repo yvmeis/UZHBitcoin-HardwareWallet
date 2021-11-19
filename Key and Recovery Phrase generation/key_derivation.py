@@ -1,8 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 18 16:42:13 2021
+import hashlib
+from phrasegenerator import gen_entropy
+def master_key(seed):
+    pass
 
-@author: Robin
-"""
 
-§§
+
+gen_entropy(128)
+master_key("ssedus")
