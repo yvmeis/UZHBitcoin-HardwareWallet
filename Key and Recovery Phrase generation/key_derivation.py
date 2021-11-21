@@ -1,6 +1,7 @@
 import hashlib
 import hmac
 import phrasegenerator as pg
+import base58
 
 
 
@@ -47,7 +48,15 @@ def serialize(extended_key: tuple, prv_pbl: str, derivation_level: str, net = 'm
     hashed_serialized_key = hashlib.sha256(hashed_serialized_key).digest()
 
     serialized_key += hashed_serialized_key[:4]
+    
+    
+def encode_b58(ser_key):
+    encoded_key = base58.b58encode(ser_key)
+    return encoded_key
 
+
+print('hello')
+encode_b58(b'hello')
 ############YOINKED CODE#########################
 def b58encode(v: bytes) -> str:
     alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
