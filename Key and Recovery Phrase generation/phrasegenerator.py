@@ -4,19 +4,13 @@ from typing import AnyStr
 #length between 128 and 256. length has to be divisible by 32
 def gen_entropy(length):
     entropy = os.urandom(length//8)
-    print(entropy)
-    print()
     return entropy
 
 def hash_entropy(entropy, length):
     h = hashlib.sha256(entropy).hexdigest()
-    print("hash")
-    print(h)
-    print()
     
     b = bin(int(h, 16))[2:].zfill(256)
     checksum = b[0:int(length/32)]
-    print(checksum)
     entropy_bytes = bin(int.from_bytes(entropy, byteorder = 'big'))[2:].zfill(length)
     print(entropy_bytes)
     mnemonic_bytes = entropy_bytes + checksum
@@ -60,8 +54,6 @@ def normalize_string(txt: AnyStr) -> str:
 def main():
     find_words(hash_entropy(gen_entropy(128), 128))
     ma_seed = gen_seed(find_words(hash_entropy(gen_entropy(128), 128)))
-    print()
-    print(ma_seed.hex())
     
 
 if __name__ == "__main__":
