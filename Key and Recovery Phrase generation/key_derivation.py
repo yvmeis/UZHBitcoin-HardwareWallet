@@ -40,7 +40,7 @@ def serialize(extended_key: tuple, prv_pbl: str, derivation_level: str, net = 'm
     serialized_key += extended_key[1]
     
     if prv_pbl == 'private':
-        serialized_key += bytes.fromhex('00') # + ??? for private key: still to be done
+        serialized_key += bytes.fromhex('00') + extended_key(0)
     if prv_pbl == 'public':
         pass #public key: still to be done
         
