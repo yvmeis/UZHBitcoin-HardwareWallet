@@ -42,6 +42,11 @@ def serialize(extended_key: tuple, prv_pbl: str, derivation_level: str, net = 'm
         serialized_key += bytes.fromhex('00') # + ??? for private key: still to be done
     if prv_pbl == 'public':
         pass #public key: still to be done
+        
+    hashed_serialized_key = hashlib.sha256(serialized_key).digest()
+    hashed_serialized_key = hashlib.sha256(hashed_serialized_key).digest()
+
+    serialized_key += hashed_serialized_key[:4]
 
 ############YOINKED CODE#########################
 def b58encode(v: bytes) -> str:
