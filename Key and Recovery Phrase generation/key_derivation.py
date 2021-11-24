@@ -2,7 +2,7 @@ import hashlib
 import hmac
 import phrasegenerator as pg
 import base58
-from secp256k1 import PrivateKey
+import btclib as bit
 
 
 
@@ -54,10 +54,10 @@ def encode_b58(ser_key):
     encoded_key = base58.b58encode(ser_key)
     return encoded_key
 
-def generate_pubkey_from_privkey(priv_key):
-    pub_key = priv_key.pubkey.serialize()
-    return pub_key
-    
+def pubkey_generation():
+    bit.to_pub_key.secp256k1
+
+
 
 
 seed = pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))
