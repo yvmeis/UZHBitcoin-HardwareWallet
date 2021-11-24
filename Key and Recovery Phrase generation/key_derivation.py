@@ -3,7 +3,7 @@ import hmac
 import phrasegenerator as pg
 import base58
 import btclib as bit
-from btclib.ecc.curve import mult, secp256k1
+import bitcoin
 
 
 def generate_master_private_key(seed):#seed as a bytestring
@@ -54,11 +54,10 @@ def encode_b58(ser_key):
     encoded_key = base58.b58encode(ser_key)
     return encoded_key
 
-def pubkey_generation():
-    bit.to_pub_key.secp256k1
-
-
 
 
 seed = pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))
-print(serialize(generate_master_private_key(seed), prv_pbl = 'private', derivation_level = '00'))
+serialized_master = serialize(generate_master_private_key(seed), prv_pbl = 'private', derivation_level = '00')
+print(serialized_master)
+
+print(bitcoin.bip32_privtopub('xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi'))
