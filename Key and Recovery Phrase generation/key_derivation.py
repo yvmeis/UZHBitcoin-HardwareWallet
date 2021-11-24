@@ -3,7 +3,7 @@ import hmac
 import phrasegenerator as pg
 import base58
 import btclib as bit
-
+from btclib.ecc.curve import mult, secp256k1
 
 
 def generate_master_private_key(seed):#seed as a bytestring
