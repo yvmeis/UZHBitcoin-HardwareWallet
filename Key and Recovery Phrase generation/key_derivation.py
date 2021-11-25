@@ -4,6 +4,7 @@ import phrasegenerator as pg
 import base58
 import btclib as bit
 import bitcoin
+import codecs
 
 
 def generate_master_private_key(seed):#seed as a bytestring
@@ -54,10 +55,22 @@ def encode_b58(ser_key):
     encoded_key = base58.b58encode(ser_key)
     return encoded_key
 
+def derive_child(prv_key, i): 
+    #   2**31 <= i <= 2**32-1 ---> hardened key derivation
+    #   0 <= i <= 2**31-1 ---> non-hardened derivation
+    der = bitcoin.bip32_ckd(prv_key, i)
+    return der
 
+def prv_to_pub(prv_key):
+    pub = bitcoin.bip32_privtopub(prv_key)
+    return pub
+    
 
 seed = pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))
-serialized_master = serialize(generate_master_private_key(seed), prv_pbl = 'private', derivation_level = '00')
-print(serialized_master)
+master = serialize(generate_master_private_key(seed), prv_pbl = 'private', derivation_level = '00')
+print(master)
+der = derive_child(master, 0)
+print(der)
+pub = prv_to_pub(der)
+print(pub)
 
-print(bitcoin.bip32_privtopub('xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi'))
