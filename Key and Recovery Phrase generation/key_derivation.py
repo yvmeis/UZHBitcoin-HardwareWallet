@@ -2,8 +2,10 @@ import hashlib
 import hmac
 import phrasegenerator as pg
 import base58
-from secp256k1 import PrivateKey
-
+import btclib as bit
+import bitcoin
+import codecs
+import unicodedata
 
 
 def generate_master_private_key(seed):#seed as a bytestring
@@ -54,11 +56,39 @@ def encode_b58(ser_key):
     encoded_key = base58.b58encode(ser_key)
     return encoded_key
 
-def generate_pubkey_from_privkey(priv_key):
-    pub_key = priv_key.pubkey.serialize()
-    return pub_key
+def derive_child(prv_key, i): 
+    #   2**31 <= i <= 2**32-1 ---> hardened key derivation
+    #   0 <= i <= 2**31-1 ---> non-hardened derivation
+    der = bitcoin.bip32_ckd(prv_key, i)
+    return der
+
+def prv_to_pub(prv_key):
+    pub = bitcoin.bip32_privtopub(prv_key)
+    return pub
+    
+def gen_address(pub_key):
+    pub_key = bitcoin.bip32_deserialize(pub_key)[-1]
+    hashed256 = hashlib.new('sha256', pub_key).digest()
+    hashed160 = hashlib.new('ripemd160', hashed256).digest()
+    hashed160v = bytes.fromhex('00') + hashed160 # 00 for mainnet bitcoin
+    b58_hashed256_1 = hashlib.new('sha256', hashed160v).digest()
+    b58_hashed256_2 = hashlib.new('sha256', b58_hashed256_1).digest()
+    address_checksum = b58_hashed256_2[:4]
+    bin_btc_address = hashed160v + address_checksum
+    address = encode_b58(bin_btc_address)
+    return address
     
 
-
 seed = pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))
-print(serialize(generate_master_private_key(seed), prv_pbl = 'private', derivation_level = '00'))
+master = serialize(generate_master_private_key(seed), prv_pbl = 'private', derivation_level = '00')
+print(master)
+der = derive_child(master, 0)
+print( 'child 1: ' + der)
+der_2 = derive_child(der, 0)
+print('child 2: ' + der_2)
+pub = prv_to_pub(der_2)
+#pub = bitcoin.bip32_deserialize(pub)[-1]
+print(pub)
+address = gen_address(pub)
+print('child 2 address: ')
+print(address)
