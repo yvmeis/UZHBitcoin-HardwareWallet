@@ -67,7 +67,7 @@ def prv_to_pub(prv_key):
     return pub
     
 def gen_address(pub_key):
-    pub_key = bytes.fromhex(pub_key)
+    pub_key = bitcoin.bip32_deserialize(pub_key)[-1]
     hashed256 = hashlib.new('sha256', pub_key).digest()
     hashed160 = hashlib.new('ripemd160', hashed256).digest()
     hashed160v = bytes.fromhex('00') + hashed160 # 00 for mainnet bitcoin
@@ -83,8 +83,12 @@ seed = pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))
 master = serialize(generate_master_private_key(seed), prv_pbl = 'private', derivation_level = '00')
 print(master)
 der = derive_child(master, 0)
-print(der)
-pub = prv_to_pub(der)
+print( 'child 1: ' + der)
+der_2 = derive_child(der, 0)
+print('child 2: ' + der_2)
+pub = prv_to_pub(der_2)
+#pub = bitcoin.bip32_deserialize(pub)[-1]
 print(pub)
 address = gen_address(pub)
+print('child 2 address: ')
 print(address)
