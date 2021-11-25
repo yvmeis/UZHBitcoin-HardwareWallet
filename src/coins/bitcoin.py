@@ -1,4 +1,4 @@
-from coins.coin import Coin
+from src.coins.coin import Coin
 
 from btclib.psbt import (
     PSBT_DELIMITER,
