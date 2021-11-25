@@ -5,6 +5,7 @@ import base58
 import btclib as bit
 import bitcoin
 import codecs
+import unicodedata
 
 
 def generate_master_private_key(seed):#seed as a bytestring
@@ -65,6 +66,18 @@ def prv_to_pub(prv_key):
     pub = bitcoin.bip32_privtopub(prv_key)
     return pub
     
+def gen_address(pub_key):
+    pub_key = bytes.fromhex(pub_key)
+    hashed256 = hashlib.new('sha256', pub_key).digest()
+    hashed160 = hashlib.new('ripemd160', hashed256).digest()
+    hashed160v = bytes.fromhex('00') + hashed160 # 00 for mainnet bitcoin
+    b58_hashed256_1 = hashlib.new('sha256', hashed160v).digest()
+    b58_hashed256_2 = hashlib.new('sha256', b58_hashed256_1).digest()
+    address_checksum = b58_hashed256_2[:4]
+    bin_btc_address = hashed160v + address_checksum
+    address = encode_b58(bin_btc_address)
+    return address
+    
 
 seed = pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))
 master = serialize(generate_master_private_key(seed), prv_pbl = 'private', derivation_level = '00')
@@ -73,4 +86,5 @@ der = derive_child(master, 0)
 print(der)
 pub = prv_to_pub(der)
 print(pub)
-
+address = gen_address(pub)
+print(address)
