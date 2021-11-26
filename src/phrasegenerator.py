@@ -1,5 +1,6 @@
-import os, binascii, secrets, hashlib, sys, unicodedata
+import os, unicodedata
 from typing import AnyStr
+import hash_collection as ha
 
 #length between 128 and 256. length has to be divisible by 32
 def gen_entropy(length):
@@ -7,7 +8,7 @@ def gen_entropy(length):
     return entropy
 
 def hash_entropy(entropy, length):
-    h = hashlib.sha256(entropy).hexdigest()
+    h = ha.sha256(entropy).hexdigest()
     
     b = bin(int(h, 16))[2:].zfill(256)
     checksum = b[0:int(length/32)]
@@ -35,10 +36,9 @@ def gen_seed(words, passphrase = ''):
     password = normalize_string(sentence)
     passphrase = normalize_string(passphrase)
     salt = 'mnemonic' + passphrase
-    iterations = 2048
     salt = salt.encode('utf-8')
     password = password.encode('utf-8')
-    seed = hashlib.pbkdf2_hmac('sha512', password, salt, iterations)
+    seed = ha.seed_hash(password, salt)
     return seed[:64]
 
 def normalize_string(txt: AnyStr) -> str:

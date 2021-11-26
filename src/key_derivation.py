@@ -1,17 +1,13 @@
-import hashlib
-import hmac
 import phrasegenerator as pg
 import base58
-import btclib as bit
 import bitcoin
-import codecs
-import unicodedata
+import hash_collection as ha
 
 
 def generate_master_private_key(seed):#seed as a bytestring
     key = "Bitcoin seed"
     key = key.encode(encoding = 'UTF-8')
-    h = hmac.new(key, seed, digestmod = hashlib.sha512).digest()
+    h = ha.hmacsha256(key, seed).digest()
     master_private_key = h[:32]
     chain_code = h[32:]
     extended_master_private_key = (master_private_key, chain_code)
@@ -45,8 +41,8 @@ def serialize(extended_key: tuple, prv_pbl: str, derivation_level: str, net = 'm
     if prv_pbl == 'public':
         pass #public key: still to be done
         
-    hashed_serialized_key = hashlib.sha256(serialized_key).digest()
-    hashed_serialized_key = hashlib.sha256(hashed_serialized_key).digest()
+    hashed_serialized_key = ha.sha256(serialized_key).digest()
+    hashed_serialized_key = ha.sha256(hashed_serialized_key).digest()
 
     serialized_key += hashed_serialized_key[:4]
     return encode_b58(serialized_key)
@@ -68,11 +64,11 @@ def prv_to_pub(prv_key):
     
 def gen_address(pub_key):
     pub_key = bitcoin.bip32_deserialize(pub_key)[-1]
-    hashed256 = hashlib.new('sha256', pub_key).digest()
-    hashed160 = hashlib.new('ripemd160', hashed256).digest()
+    hashed256 = ha.sha256(pub_key).digest()
+    hashed160 = ha.ripemd160(hashed256).digest()
     hashed160v = bytes.fromhex('00') + hashed160 # 00 for mainnet bitcoin
-    b58_hashed256_1 = hashlib.new('sha256', hashed160v).digest()
-    b58_hashed256_2 = hashlib.new('sha256', b58_hashed256_1).digest()
+    b58_hashed256_1 = ha.sha256(hashed160v).digest()
+    b58_hashed256_2 = ha.sha256(b58_hashed256_1).digest()
     address_checksum = b58_hashed256_2[:4]
     bin_btc_address = hashed160v + address_checksum
     address = encode_b58(bin_btc_address)
