@@ -2,41 +2,53 @@ from typing import ByteString
 import bcrypt
 import json
 
+
 class Pin:
 
     def __init__(self):
         with open("./src/data/pin.json", "r") as pin_file:
             pin = json.load(pin_file)
-            self.hashed = pin["pin"]
+            if pin["pin"] != "":
+                self.hashed: bytes = bytes(pin["pin"], encoding='utf-8')
+            else:
+                self.hashed = b""
 
-    def exists(self):
-        return self.hashed != "" 
+    def exists(self) -> bool:
+        """ Checks if a pin exists. """
+        return self.hashed != b""
 
-    def create(self):
-        pin = input("Please create a pin for your hardware wallet. It will be used to unlock it: ")
+    def create(self) -> None:
+        """ Asks user to create a new pin. """
+        print("Please create a pin for your hardware wallet. It will be used to unlock it.")
+        pin = input(
+            "Your pin is should consist of numbers only and have between 8 and 32 characters: ")
         while True:
             formatting_correct = True
             if len(pin) > 32 or len(pin) < 8:
                 formatting_correct = False
-                pin = input("The pin has to be between 8 and 32 numbers. Please provide a new pin: ")
+                pin = input(
+                    "The pin has to be between 8 and 32 numbers. Please provide a new pin: ")
             for symbol in pin:
                 if symbol not in "0123456789":
                     formatting_correct = False
-                    pin = input("The pin has to be between 8 and 32 numbers. Please provide a new pin: ")
+                    pin = input(
+                        "The pin has to be between 8 and 32 numbers. Please provide a new pin: ")
                     break
             if formatting_correct:
                 break
 
         self.hashed = self.__hash(pin)
         with open(r"./src/data/pin.json", "w") as pin_file:
-            pin_file.write(json.dumps({"pin": str(self.hashed)}))
+            pin_file.write(json.dumps({"pin": self.hashed.decode()}))
         # check if pin already exists
 
     def check(self) -> bool:
+        """ Used to validate user input. """
         for _ in range(3):
             pin = input("Please enter your pin: ")
-            pin = pin.encode()
-            if bcrypt.checkpw(pin, self.hashed):
+            pin_encoded = pin.encode()
+            if bcrypt.checkpw(pin_encoded, self.hashed):
+                self.value = pin
                 print("Wallet unlocked.")
                 return True
             else:
@@ -44,8 +56,8 @@ class Pin:
         print("Three incorrect attempts.")
         return False
 
-    #returns the hashed password
     def __hash(self, pin) -> bytes:
+        """ returns the hashed password. """
         pin = pin.encode()
         hashed = bcrypt.hashpw(pin, bcrypt.gensalt())
         return hashed

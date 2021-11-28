@@ -1,15 +1,18 @@
-from coins.coin import Coin
+from src.coins.coin import Coin
+
 
 class Wallet:
     """ Creates a wallet for coin of type coin. """
-    def __init__(self, coin: Coin):
+
+    def __init__(self, name: str, coin: Coin):
+        self.name: str = name
         self.coin: Coin = coin
-        # generate private and public key
 
     """ Generate private and public key. """
-    def __generate_keys(self):
-        pass
 
+    def __generate_keys(self):
+        # generate private and public key
+        pass
 
     def process_transaction(self, tx):
         self.coin.handle_transaction(tx)

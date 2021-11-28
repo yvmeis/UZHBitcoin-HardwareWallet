@@ -1,8 +1,29 @@
 import unittest
+from unittest import mock
+from src.coins.bitcoin import Bitcoin
+from src.exceptions.WalletLockedException import WalletLockedException
+
+from src.hw import HW
+
 
 class TestHW(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.hw = HW()
+
     def test_unlock(self):
-        pass
+        with mock.patch('builtins.input', return_value="12345678"):
+            self.hw.unlock()
+        self.assertTrue(self.hw.is_unlocked())
+
+    def test_lock(self):
+        with mock.patch('builtins.input', return_value="12345678"):
+            self.hw.unlock()
+        self.hw.lock()
+
+    def test_create_wallet_when_locked(self):
+        with self.assertRaises(WalletLockedException):
+            self.hw.create_new_wallet(Bitcoin())
 
     def test_create_new_wallet(self):
         pass
@@ -13,6 +34,6 @@ class TestHW(unittest.TestCase):
     def test_list_wallets(self):
         pass
 
-    
+
 if __name__ == '__main__':
     unittest.main()
