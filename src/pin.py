@@ -1,5 +1,6 @@
 from typing import ByteString
 import bcrypt
+from getpass import getpass
 import json
 
 
@@ -20,7 +21,7 @@ class Pin:
     def create(self) -> None:
         """ Asks user to create a new pin. """
         print("Please create a pin for your hardware wallet. It will be used to unlock it.")
-        pin = input(
+        pin = getpass(
             "Your pin is should consist of numbers only and have between 8 and 32 characters: ")
         while True:
             formatting_correct = True
@@ -45,7 +46,7 @@ class Pin:
     def check(self) -> bool:
         """ Used to validate user input. """
         for _ in range(3):
-            pin = input("Please enter your pin: ")
+            pin = getpass("Please enter your pin: ")
             pin_encoded = pin.encode()
             if bcrypt.checkpw(pin_encoded, self.hashed):
                 self.value = pin
