@@ -4,6 +4,7 @@ import bitcoin
 import hash_collection as ha
 from btclib import to_pub_key
 from btclib.curve import secp256k1
+import btclib
 
 
 def generate_master_private_key(seed):  # seed as a bytestring
@@ -63,7 +64,8 @@ def derive_child(prv_key, i):
 
 
 def prv_to_pub(prv_key):
-    pub = bitcoin.bip32_privtopub(prv_key)
+    #pub = bitcoin.bip32_privtopub(prv_key)
+    pub = btclib.bip32.xpub_from_xprv(prv_key)
     return pub
 
 
