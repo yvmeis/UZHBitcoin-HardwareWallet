@@ -9,11 +9,11 @@ from btclib.psbt import (
     finalize_psbt
 )
 
+
 class Bitcoin(Coin):
 
     def sign_transaction(self):
         pass
-
 
     def get_transaction_info(self, tx) -> str:
         psbt_raw = Psbt.b64decode(tx)
@@ -21,7 +21,7 @@ class Bitcoin(Coin):
         psbt_raw.assert_signable()
         psbt: dict = psbt_raw.to_dict()
 
-        vout:list[dict] = psbt["tx"]["vout"]
+        vout: list[dict] = psbt["tx"]["vout"]
 
         text = ""
 
@@ -29,3 +29,6 @@ class Bitcoin(Coin):
             text += f"Paying {0.00000001 * stream['value']} btc to {stream['address']}\n"
 
         return text
+
+    def __str__(self):
+        return "Bitcoin"

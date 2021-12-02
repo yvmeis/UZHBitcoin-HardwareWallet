@@ -12,6 +12,7 @@ bcrypt = "*"
 base58 = "*"
 secp256k1 = "*"
 autopep8 = "*"
+pprintpp = "*"
 
 [dev-packages]
 
