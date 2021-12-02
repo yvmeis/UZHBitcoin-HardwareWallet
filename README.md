@@ -4,6 +4,9 @@
     pipenv install
   
 ## Usage
+Make sure to have installed the dependencies first and that the environment is activated.
+    pipenv shell
+    python3 run.py
 
 ## Future Development Goals
 The next steps in the project would be:
