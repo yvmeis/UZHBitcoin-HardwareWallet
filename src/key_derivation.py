@@ -5,6 +5,7 @@ import hash_collection as ha
 from btclib import to_pub_key
 from btclib.curve import secp256k1
 import btclib
+from btclib import *
 
 
 def generate_master_private_key(seed):  # seed as a bytestring
