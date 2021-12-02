@@ -16,14 +16,9 @@ class TestHW(unittest.TestCase):
             self.hw.unlock()
         self.assertTrue(self.hw.is_unlocked())
 
-    def test_lock(self):
-        with mock.patch('builtins.input', return_value="12345678"):
-            self.hw.unlock()
-        self.hw.lock()
-
     def test_create_wallet_when_locked(self):
         with self.assertRaises(WalletLockedException):
-            self.hw.create_new_wallet(Bitcoin())
+            self.hw.create_new_wallet()
 
     def test_create_new_wallet(self):
         pass
