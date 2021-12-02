@@ -2,6 +2,8 @@ import phrasegenerator as pg
 import base58
 import bitcoin
 import hash_collection as ha
+from btclib import to_pub_key
+from btclib.curve import secp256k1
 
 
 def generate_master_private_key(seed):  # seed as a bytestring
@@ -77,6 +79,9 @@ def gen_address(pub_key):
     address = encode_b58(bin_btc_address)
     return address
 
+def get_point_from_key(pub):
+    point = to_pub_key._point_from_xpub(pub, secp256k1)
+    return point
 
 seed = pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))
 master = serialize(generate_master_private_key(
@@ -92,3 +97,4 @@ print(pub)
 address = gen_address(pub)
 print('child 2 address: ')
 print(address)
+print(get_point_from_key(pub))
