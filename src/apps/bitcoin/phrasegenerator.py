@@ -24,7 +24,7 @@ def hash_entropy(entropy, length):
 
 
 def find_words(binary):
-    file = open('src/english.txt', 'r')
+    file = open('src/apps/bitcoin/english.txt', 'r')
     words = []
     phrase = []
     for x in file:

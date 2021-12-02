@@ -78,17 +78,26 @@ def gen_address(pub_key):
     return address
 
 
-seed = pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))
-master = serialize(generate_master_private_key(
-    seed), prv_pbl='private', derivation_level='00')
-print(master)
-der = derive_child(master, 0)
-print('child 1: ' + der)
-der_2 = derive_child(der, 0)
-print('child 2: ' + der_2)
-pub = prv_to_pub(der_2)
-#pub = bitcoin.bip32_deserialize(pub)[-1]
-print(pub)
-address = gen_address(pub)
-print('child 2 address: ')
-print(address)
+def create_seed():
+    return pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))
+
+
+def create_extended_private_key(seed):
+    return serialize(generate_master_private_key(
+        seed), prv_pbl='private', derivation_level='00')
+
+
+# seed = create_seed()
+words = pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128))
+print(words)
+# master = create_extended_private_key(seed.decode('utf-8'))
+# der = derive_child(master, 0)
+# print('child 1: ' + der)
+# der_2 = derive_child(der, 0)
+# print('child 2: ' + der_2)
+# pub = prv_to_pub(der_2)
+# #pub = bitcoin.bip32_deserialize(pub)[-1]
+# print(pub)
+# address = gen_address(pub)
+# print('child 2 address: ')
+# print(address)
