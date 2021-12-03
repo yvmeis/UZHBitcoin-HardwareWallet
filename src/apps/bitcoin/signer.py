@@ -3,7 +3,7 @@ import phrasegenerator as pg
 import key_derivation as kd
 import hash_collection as hc
 import btclib.dsa
-import btclib.der
+
 
 
 def sign(tx_data, priv_key):
