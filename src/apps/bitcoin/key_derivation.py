@@ -1,7 +1,11 @@
-import src.apps.bitcoin.phrasegenerator as pg
+import phrasegenerator as pg
 import base58
 import bitcoin
-import src.apps.bitcoin.hash_collection as ha
+import hash_collection as ha
+from btclib import to_pub_key
+from btclib.curve import secp256k1
+import btclib
+from btclib import *
 
 
 def generate_master_private_key(seed):  # seed as a bytestring
@@ -61,7 +65,8 @@ def derive_child(prv_key, i):
 
 
 def prv_to_pub(prv_key):
-    pub = bitcoin.bip32_privtopub(prv_key)
+    #pub = bitcoin.bip32_privtopub(prv_key)
+    pub = btclib.bip32.xpub_from_xprv(prv_key)
     return pub
 
 
@@ -77,26 +82,26 @@ def gen_address(pub_key):
     address = encode_b58(bin_btc_address)
     return address
 
+def get_y_point_from_key(pub):
+    point = to_pub_key._point_from_xpub(pub, secp256k1)
+    return point[1]
 
-def create_seed():
-    return pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))
+def get_x_point_from_key(pub):
+    point = to_pub_key._point_from_xpub(pub, secp256k1)
+    return point[0]
 
-
-def create_extended_private_key(seed):
-    return serialize(generate_master_private_key(
-        seed), prv_pbl='private', derivation_level='00')
-
-
-# seed = create_seed()
-# master = create_extended_private_key(seed)
-# print(master)
-# der = derive_child(master, 0)
-# print('child 1: ' + der)
-# der_2 = derive_child(der, 0)
-# print('child 2: ' + der_2)
-# pub = prv_to_pub(der_2)
+seed = pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))
+master = serialize(generate_master_private_key(
+    seed), prv_pbl='private', derivation_level='00')
+print(master)
+der = derive_child(master, 0)
+print('child 1: ' + der)
+der_2 = derive_child(der, 0)
+print('child 2: ' + der_2)
+pub = prv_to_pub(der_2)
 #pub = bitcoin.bip32_deserialize(pub)[-1]
-# print(pub)
-# address = gen_address(pub)
-# print('child 2 address: ')
-# print(address)
+print(pub)
+address = gen_address(pub)
+print('child 2 address: ')
+print(address)
+print(get_x_point_from_key(pub))
