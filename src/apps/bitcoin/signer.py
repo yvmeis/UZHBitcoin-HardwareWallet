@@ -74,23 +74,21 @@ def create_S(ephemeral_priv_key, x_point, signing_priv_key, transaction_data, pr
 
 print()
 print()
-print('Signer Testing')
+print('______SIGNER TESTING______')
 print()
 print()
-
-print(signing(gen_ephemeral_key_pair(gen_ephemeral_priv_key()), kd.serialize(kd.generate_master_private_key(
-    pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))), prv_pbl='private', derivation_level='00'), '1 bitcoin from adam to badam'))
-
-print()
+print('Unserialized Signature Test:')
 print()
 print(sign('1 bitcoin from A to B', kd.serialize(kd.generate_master_private_key(
     pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))), prv_pbl='private', derivation_level='00')))
 
 print()
+print('Serialized Signature Test:')
 print()
 print(serialize(64253977217758846859414201058161650158619866183565489834321854925766454143535, 39567966726055997072994372544800074843565183980099195229122726343952059371025))
 
 print()
+print('Sequence Length Test:')
 print()
 control_byte = bytes.fromhex('02208e0e765b05bc5fef1b81ba60cd5b95c723247b5493141a9208518da4f577ea2f0220577aacef813bf904079488e79a7652277c5f51a8ec1223dbc81c58da25088e11')
 checklength = hex(len(control_byte))
