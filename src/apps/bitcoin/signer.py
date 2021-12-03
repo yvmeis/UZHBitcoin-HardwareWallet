@@ -3,6 +3,7 @@ import phrasegenerator as pg
 import key_derivation as kd
 import hash_collection as hc
 import btclib.dsa
+import btclib.der
 
 
 def sign(tx_data, priv_key):
@@ -16,6 +17,24 @@ def sign(tx_data, priv_key):
     signature = btclib.dsa.sign(m, priv_key)
     
     return signature
+
+def serialize(r, s, sighash_suffix = '01'):
+    r = hex(r)[2:]
+    r_byte = bytes.fromhex(r)
+    s = hex(s)[2:]
+    s_byte = bytes.fromhex(s)
+    length_r = hex(len(r_byte))[2:]
+    length_s = hex(len(s_byte))[2:]
+    
+    DER_start = '30'
+    sequence_length = str(int(length_r) + int(length_s) + 4)
+    
+    integer_value_indicator = '02'
+
+    serialized_signature = DER_start + sequence_length + integer_value_indicator + length_r + r + integer_value_indicator + length_s + s + sighash_suffix
+    
+    return serialized_signature
+    
 
 def gen_ephemeral_priv_key():  
     ephemeral_priv_key = kd.serialize(kd.generate_master_private_key(pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))), prv_pbl='private', derivation_level='00')
@@ -51,7 +70,7 @@ def create_S(ephemeral_priv_key, x_point, signing_priv_key, transaction_data, pr
     return S
 
 
-###################TEST####################
+###################TESTS####################
 
 print()
 print()
@@ -66,3 +85,13 @@ print()
 print()
 print(sign('1 bitcoin from A to B', kd.serialize(kd.generate_master_private_key(
     pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))), prv_pbl='private', derivation_level='00')))
+
+print()
+print()
+print(serialize(64253977217758846859414201058161650158619866183565489834321854925766454143535, 39567966726055997072994372544800074843565183980099195229122726343952059371025))
+
+print()
+print()
+control_byte = bytes.fromhex('02208e0e765b05bc5fef1b81ba60cd5b95c723247b5493141a9208518da4f577ea2f0220577aacef813bf904079488e79a7652277c5f51a8ec1223dbc81c58da25088e11')
+checklength = hex(len(control_byte))
+print(checklength)
