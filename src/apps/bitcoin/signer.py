@@ -1,4 +1,3 @@
-from btclib import *
 import phrasegenerator as pg
 import key_derivation as kd
 import hash_collection as hc
