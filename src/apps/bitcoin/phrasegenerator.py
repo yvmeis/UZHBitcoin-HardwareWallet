@@ -1,7 +1,7 @@
 import os
 import unicodedata
 from typing import AnyStr
-import hash_collection as ha
+import src.apps.bitcoin.hash_collection as ha
 
 # length between 128 and 256. length has to be divisible by 32
 
@@ -18,7 +18,6 @@ def hash_entropy(entropy, length):
     checksum = b[0:int(length/32)]
     entropy_bytes = bin(int.from_bytes(entropy, byteorder='big'))[
         2:].zfill(length)
-    print(entropy_bytes)
     mnemonic_bytes = entropy_bytes + checksum
     return mnemonic_bytes
 
@@ -39,7 +38,6 @@ def find_words(binary):
 
 def gen_seed(words, passphrase=''):
     sentence = " ".join(words)
-    print(sentence)
     password = normalize_string(sentence)
     passphrase = normalize_string(passphrase)
     salt = 'mnemonic' + passphrase

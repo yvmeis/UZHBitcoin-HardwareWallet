@@ -1,6 +1,7 @@
 from enum import Enum
 import json
 from typing import Any, Dict, List
+from getpass import getpass
 
 from src.require_unlocked import require_unlocked
 from src.coins.coin import Coin
@@ -39,6 +40,7 @@ class HW:
                 print(f"Commands are: {list(commands.keys())}")
             else:
                 commands[action]()
+                print("")
 
     def __load_wallets(self):
         with open("./src/data/wallets.json", "r") as wallets_file:
@@ -48,8 +50,15 @@ class HW:
     def unlock(self) -> None:
         if not self.__pin.exists():
             self.__pin.create()
-        if self.__pin.check():
-            self.__status = Status.UNLOCKED
+        for _ in range(3):
+            pin = getpass("Please enter your pin: ")
+            if self.__pin.check(pin):
+                print("Wallet unlocked.")
+                self.__status = Status.UNLOCKED
+                return
+            else:
+                print("Pin incorrect.")
+        print("Three incorrect attempts.")
 
     def is_unlocked(self) -> bool:
         return self.__status == Status.UNLOCKED
@@ -94,6 +103,9 @@ class HW:
                 "Type the name of the coin your wallet should hold: ")
             try:
                 wallet = Wallet(name, coin)
+                pin = getpass("Please enter your pin: ")
+                self.__pin.check(pin)
+                wallet.create(pin)
                 self.__wallets[name] = wallet
                 print("Wallet successfully created!")
                 break
@@ -107,5 +119,5 @@ class HW:
 
     @require_unlocked
     def list_wallets(self):
-        for wallet in self.__wallets:
+        for wallet in self.__wallets.values():
             print(wallet)

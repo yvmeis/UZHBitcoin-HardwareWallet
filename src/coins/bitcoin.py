@@ -1,3 +1,4 @@
+from json.encoder import JSONEncoder
 from src.coins.coin import Coin
 
 from btclib.psbt import (
@@ -32,3 +33,6 @@ class Bitcoin(Coin):
 
     def __str__(self):
         return "Bitcoin"
+
+    def __repr__(self):
+        return self.__str__()

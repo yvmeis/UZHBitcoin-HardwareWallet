@@ -1,7 +1,7 @@
-import phrasegenerator as pg
+import src.apps.bitcoin.phrasegenerator as pg
 import base58
 import bitcoin
-import hash_collection as ha
+import src.apps.bitcoin.hash_collection as ha
 
 
 def generate_master_private_key(seed):  # seed as a bytestring
@@ -88,15 +88,14 @@ def create_extended_private_key(seed):
 
 
 # seed = create_seed()
-words = pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128))
-print(words)
-# master = create_extended_private_key(seed.decode('utf-8'))
+# master = create_extended_private_key(seed)
+# print(master)
 # der = derive_child(master, 0)
 # print('child 1: ' + der)
 # der_2 = derive_child(der, 0)
 # print('child 2: ' + der_2)
 # pub = prv_to_pub(der_2)
-# #pub = bitcoin.bip32_deserialize(pub)[-1]
+#pub = bitcoin.bip32_deserialize(pub)[-1]
 # print(pub)
 # address = gen_address(pub)
 # print('child 2 address: ')

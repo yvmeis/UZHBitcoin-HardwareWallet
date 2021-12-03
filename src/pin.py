@@ -43,18 +43,12 @@ class Pin:
             pin_file.write(json.dumps({"pin": self.hashed.decode()}))
         # check if pin already exists
 
-    def check(self) -> bool:
+    def check(self, pin: str) -> bool:
         """ Used to validate user input. """
-        for _ in range(3):
-            pin = getpass("Please enter your pin: ")
-            pin_encoded = pin.encode()
-            if bcrypt.checkpw(pin_encoded, self.hashed):
-                self.value = pin
-                print("Wallet unlocked.")
-                return True
-            else:
-                print("Pin incorrect.")
-        print("Three incorrect attempts.")
+        pin_encoded = pin.encode()
+        if bcrypt.checkpw(pin_encoded, self.hashed):
+            self.value = pin
+            return True
         return False
 
     def __hash(self, pin) -> bytes:
