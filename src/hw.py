@@ -112,6 +112,11 @@ class HW:
             except ValueError as e:
                 print(e)
 
+    def recover_wallet(self) -> None:
+        """ Recovers a wallet using its seed phrase """
+        # TODO
+        pass
+
     @require_unlocked
     def load_wallet(self) -> None:
         # TODO
@@ -120,4 +125,4 @@ class HW:
     @require_unlocked
     def list_wallets(self):
         for wallet in self.__wallets.values():
-            print(wallet)
+            print(wallet, "\n")

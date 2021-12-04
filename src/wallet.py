@@ -3,18 +3,21 @@ from json.encoder import JSONEncoder
 from typing import Dict, List
 from src.coins.bitcoin import Bitcoin
 from src.coins.coin import Coin
-from src.apps.bitcoin.key_derivation import create_extended_private_key
+from src.apps.bitcoin.key_derivation import create_extended_private_key, derive_child, prv_to_pub, gen_address
 import src.apps.bitcoin.phrasegenerator as pg
 import os
-import random
+import io
+import qrcode
 
 
 class Wallet:
     """ Creates a wallet for coin of type coin. """
 
-    def __init__(self, name: str, coin: str, private_key=None):
+    def __init__(self, name: str, coin: str, public_key=None, private_key=None):
         self.__coins_supported = {"bitcoin": Bitcoin()}
         self.__name = name
+        self.__public_key = public_key
+        self.__address: bytes = gen_address(self.__public_key)
         if coin not in self.__coins_supported:
             raise ValueError(
                 f"Coin '{coin}' is not supported. So far only {self.__coins_supported.keys()}' are supported.")
@@ -59,6 +62,8 @@ class Wallet:
         words: List[str] = self.__create_seed_phrase()
         # create private key
         priv_key: bytes = create_extended_private_key(pg.gen_seed(words))
+        self.__public_key: str = prv_to_pub(derive_child(priv_key, 0))
+        self.__address: bytes = gen_address(self.__public_key)
         # store
         content = None
         with open("./src/data/wallets.json", "r") as wallets_file:
@@ -67,6 +72,7 @@ class Wallet:
             wallets.append({
                 "name": self.__name,
                 "coin": self.__coin,
+                "public_key": self.__public_key,
                 "private_key": priv_key.decode()
             })
             content["wallets"] = wallets
@@ -82,7 +88,12 @@ class Wallet:
         return self.__name == other.__name
 
     def __repr__(self) -> str:
-        return f"Name: {self.__name}, Coin: {self.__coin}"
+        qr = qrcode.QRCode()
+        qr.add_data(self.__address.decode())
+        f = io.StringIO()
+        qr.print_ascii(out=f)
+        f.seek(0)
+        return f"Name: {self.__name}\nCoin: {self.__coin}\nPublic Key: {self.__address.decode()}\n{f.read()}"
 
     def __str__(self) -> str:
         return self.__repr__()

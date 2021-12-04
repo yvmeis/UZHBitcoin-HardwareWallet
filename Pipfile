@@ -13,6 +13,7 @@ base58 = "*"
 secp256k1 = "*"
 autopep8 = "*"
 pprintpp = "*"
+qrcode = "*"
 
 [dev-packages]
 
