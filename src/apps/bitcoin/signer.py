@@ -6,8 +6,7 @@ import btclib.dsa
 
 
 
-def sign_tx(tx_data, priv_key):
-    
+def sign_tx(tx_data, priv_key): 
     if isinstance(tx_data, bytes):
         m = tx_data.decode('utf8')
     elif isinstance(tx_data, str):
@@ -34,6 +33,16 @@ def serialize_tx(r, s, sighash_suffix = '01'):
     serialized_signature = DER_start + sequence_length + integer_value_indicator + length_r + r + integer_value_indicator + length_s + s + sighash_suffix
     
     return serialized_signature
+    
+def scriptSig_serialization(serialized_signature, pub_key):
+    sig_byte = bytes.fromhex(serialized_signature)
+    sig_length = hex(len(sig_byte))[2:]
+    pub_byte = bytes.fromhex(pub_key)
+    pub_key_length = hex(len(pub_byte))[2:]
+    
+    scriptSig = sig_length + serialized_signature + pub_key_length + pub_key
+    return scriptSig
+    
     
 def sign_psbt():
     return None
@@ -81,14 +90,16 @@ print()
 print()
 print('Unserialized Signature Test:')
 print()
-signature = sign_tx('1 bitcoin from A to B', kd.serialize(kd.generate_master_private_key(
-    pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))), prv_pbl='private', derivation_level='00'))
+priv_key = kd.serialize(kd.generate_master_private_key(
+    pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))), prv_pbl='private', derivation_level='00')
+signature = sign_tx('1 bitcoin from A to B', priv_key)
 print(signature)
 
 print()
 print('Serialized Signature Test:')
 print()
-print(serialize_tx(signature.r, signature.s))
+serialized_sig = serialize_tx(signature.r, signature.s)
+print(serialized_sig)
 
 print()
 print('Sequence Length Test:')
@@ -96,3 +107,12 @@ print()
 control_byte = bytes.fromhex('02208e0e765b05bc5fef1b81ba60cd5b95c723247b5493141a9208518da4f577ea2f0220577aacef813bf904079488e79a7652277c5f51a8ec1223dbc81c58da25088e11')
 checklength = hex(len(control_byte))
 print(checklength)
+
+print()
+print('ScriptSig Test:')
+print()
+pub_key = kd.prv_to_pub(priv_key)
+print(pub_key)
+deserialized_pub_key = pub_key.deserialize
+print(deserialized_pub_key)
+print(scriptSig_serialization(serialized_sig, deserialized_pub_key))
