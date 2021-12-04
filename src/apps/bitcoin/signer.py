@@ -46,9 +46,6 @@ def scriptSig_serialization(serialized_signature, pub_key):
     scriptSig = sig_length + serialized_signature + pub_key_length + pub_key.key.hex()
     return scriptSig
     
-    
-def sign_psbt():
-    return None
 
 def gen_ephemeral_priv_key():  
     ephemeral_priv_key = kd.serialize(kd.generate_master_private_key(pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))), prv_pbl='private', derivation_level='00')
