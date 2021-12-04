@@ -3,7 +3,7 @@ from json.encoder import JSONEncoder
 from typing import Dict, List
 from src.coins.bitcoin import Bitcoin
 from src.coins.coin import Coin
-from src.apps.bitcoin.key_derivation import create_extended_private_key, derive_child, prv_to_pub, gen_address
+from src.apps.bitcoin.key_derivation import create_priv_key, derive_child, prv_to_pub, addr_from_pub
 import src.apps.bitcoin.phrasegenerator as pg
 import os
 import io
@@ -17,7 +17,7 @@ class Wallet:
         self.__coins_supported = {"bitcoin": Bitcoin()}
         self.__name = name
         self.__public_key = public_key
-        self.__address: bytes = gen_address(self.__public_key)
+        self.__address: bytes = addr_from_pub(self.__public_key)
         if coin not in self.__coins_supported:
             raise ValueError(
                 f"Coin '{coin}' is not supported. So far only {self.__coins_supported.keys()}' are supported.")
@@ -61,9 +61,9 @@ class Wallet:
         # create seed phrase
         words: List[str] = self.__create_seed_phrase()
         # create private key
-        priv_key: bytes = create_extended_private_key(pg.gen_seed(words))
+        priv_key: bytes = create_priv_key(pg.gen_seed(words))
         self.__public_key: str = prv_to_pub(derive_child(priv_key, 0))
-        self.__address: bytes = gen_address(self.__public_key)
+        self.__address: bytes = addr_from_pub(self.__public_key)
         # store
         content = None
         with open("./src/data/wallets.json", "r") as wallets_file:
