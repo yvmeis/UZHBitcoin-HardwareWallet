@@ -16,6 +16,8 @@ def finalize(psbt):
 
     return f_psbt
 
+#privkey in form: (03 572f9af6aebd7a6764264e17abdc4fc80cf359c11f81cbbe4ecf7a2c234a5f8f)
+#sig in serialized form
 def sign_psbt(psbt, priv_key, signature):
     psbt.inputs[0].partial_sigs[priv_key] = signature
     assert psbt.inputs[0].partial_sigs[priv_key] == signature
