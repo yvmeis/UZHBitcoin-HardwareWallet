@@ -3,6 +3,9 @@ import phrasegenerator as pg
 import key_derivation as kd
 import hash_collection as hc
 import btclib.dsa
+import btclib.bip32
+from btclib.bip32 import _BIP32KeyData
+from dataclasses_json import DataClassJsonMixin, config
 
 
 
@@ -37,10 +40,10 @@ def serialize_tx(r, s, sighash_suffix = '01'):
 def scriptSig_serialization(serialized_signature, pub_key):
     sig_byte = bytes.fromhex(serialized_signature)
     sig_length = hex(len(sig_byte))[2:]
-    pub_byte = bytes.fromhex(pub_key)
-    pub_key_length = hex(len(pub_byte))[2:]
+    #pub_byte = bytes.fromhex(pub_key)
+    pub_key_length = hex(len(pub_key.key))[2:]
     
-    scriptSig = sig_length + serialized_signature + pub_key_length + pub_key
+    scriptSig = sig_length + serialized_signature + pub_key_length + pub_key.key.hex()
     return scriptSig
     
     
@@ -80,6 +83,9 @@ def create_S(ephemeral_priv_key, x_point, signing_priv_key, transaction_data, pr
     
     return S
 
+def deserialize(key):
+    décodée = btclib.bip32.BIP32KeyData.b58decode(key)
+    return décodée
 
 ###################TESTS####################
 
@@ -113,6 +119,8 @@ print('ScriptSig Test:')
 print()
 pub_key = kd.prv_to_pub(priv_key)
 print(pub_key)
-deserialized_pub_key = pub_key.deserialize
+deserialized_pub_key = deserialize(pub_key)
 print(deserialized_pub_key)
+print()
+print(deserialized_pub_key.key)
 print(scriptSig_serialization(serialized_sig, deserialized_pub_key))
