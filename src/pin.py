@@ -3,6 +3,8 @@ import bcrypt
 from getpass import getpass
 import json
 
+from src.exceptions.pinIncorrectFormattedException import PinIncorrectFormattedException
+
 
 class Pin:
 
@@ -18,25 +20,15 @@ class Pin:
         """ Checks if a pin exists. """
         return self.hashed != b""
 
-    def create(self) -> None:
-        """ Asks user to create a new pin. """
-        print("Please create a pin for your hardware wallet. It will be used to unlock it.")
-        pin = getpass(
-            "Your pin is should consist of numbers only and have between 8 and 32 characters: ")
-        while True:
-            formatting_correct = True
-            if len(pin) > 32 or len(pin) < 8:
-                formatting_correct = False
-                pin = input(
-                    "The pin has to be between 8 and 32 numbers. Please provide a new pin: ")
-            for symbol in pin:
-                if symbol not in "0123456789":
-                    formatting_correct = False
-                    pin = input(
-                        "The pin has to be between 8 and 32 numbers. Please provide a new pin: ")
-                    break
-            if formatting_correct:
-                break
+    def create(self, pin) -> None:
+        """ Creates a new pin """
+        if len(pin) > 32 or len(pin) < 8:
+            raise PinIncorrectFormattedException(
+                "Pin length has to be between 32 and 8 characters.")
+        for symbol in pin:
+            if symbol not in "0123456789":
+                raise PinIncorrectFormattedException(
+                    "Pin has to consist of numbers only.")
 
         self.hashed = self.__hash(pin)
         with open(r"./src/data/pin.json", "w") as pin_file:
