@@ -6,7 +6,7 @@ import btclib.dsa
 
 
 
-def sign(tx_data, priv_key):
+def sign_tx(tx_data, priv_key):
     
     if isinstance(tx_data, bytes):
         m = tx_data.decode('utf8')
@@ -18,7 +18,7 @@ def sign(tx_data, priv_key):
     
     return signature
 
-def serialize(r, s, sighash_suffix = '01'):
+def serialize_tx(r, s, sighash_suffix = '01'):
     r = hex(r)[2:]
     r_byte = bytes.fromhex(r)
     s = hex(s)[2:]
@@ -35,6 +35,8 @@ def serialize(r, s, sighash_suffix = '01'):
     
     return serialized_signature
     
+def sign_psbt():
+    return None
 
 def gen_ephemeral_priv_key():  
     ephemeral_priv_key = kd.serialize(kd.generate_master_private_key(pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))), prv_pbl='private', derivation_level='00')
@@ -79,13 +81,14 @@ print()
 print()
 print('Unserialized Signature Test:')
 print()
-print(sign('1 bitcoin from A to B', kd.serialize(kd.generate_master_private_key(
-    pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))), prv_pbl='private', derivation_level='00')))
+signature = sign_tx('1 bitcoin from A to B', kd.serialize(kd.generate_master_private_key(
+    pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))), prv_pbl='private', derivation_level='00'))
+print(signature)
 
 print()
 print('Serialized Signature Test:')
 print()
-print(serialize(64253977217758846859414201058161650158619866183565489834321854925766454143535, 39567966726055997072994372544800074843565183980099195229122726343952059371025))
+print(serialize_tx(signature.r, signature.s))
 
 print()
 print('Sequence Length Test:')
