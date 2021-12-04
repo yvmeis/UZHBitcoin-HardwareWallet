@@ -1,7 +1,7 @@
 import os
 import unicodedata
 from typing import AnyStr
-import src.apps.bitcoin.hash_collection as ha
+from . import hash_collection as ha
 
 # length between 128 and 256. length has to be divisible by 32
 
@@ -23,7 +23,10 @@ def hash_entropy(entropy, length):
 
 
 def find_words(binary):
-    file = open('src/apps/bitcoin/english.txt', 'r')
+    path = 'src/apps/bitcoin/english.txt'
+    if not os.path.exists('src/apps/bitcoin/english.txt'):
+        path = 'english.txt'
+    file = open(path, 'r')
     words = []
     phrase = []
     for x in file:

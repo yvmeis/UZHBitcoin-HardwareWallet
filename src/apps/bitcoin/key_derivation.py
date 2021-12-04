@@ -1,7 +1,7 @@
-import src.apps.bitcoin.phrasegenerator as pg
+from . import phrasegenerator as pg
 import base58
 import bitcoin
-import src.apps.bitcoin.hash_collection as ha
+from . import hash_collection as ha
 from btclib import to_pub_key
 from btclib.curve import secp256k1
 import btclib
@@ -93,17 +93,20 @@ def get_x_point_from_key(pub):
     return point[0]
 
 
-def create_priv_key(seed):
-    # Please don't remove this function
-    return serialize(generate_master_private_key(
-        seed), prv_pbl='private', derivation_level='00')
+def gen_wallet():
+    # TODO generate wallet information
+    pvt_key = "blabla"
+    seed_phrase = "banana apple ..."
+    addr = "someaddress"
+
+    return {
+        "pvt_key": pvt_key,
+        "seed_phrase": seed_phrase,
+        "addr": addr
+    }
 
 
-def addr_from_pub(pub):
-    return gen_address(bitcoin.bip32_deserialize(pub)[-1])
-
-
-def main():
+if __name__ == "main":
     seed = pg.gen_seed(pg.find_words(
         pg.hash_entropy(pg.gen_entropy(128), 128)))
     master = serialize(generate_master_private_key(
