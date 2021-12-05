@@ -93,6 +93,15 @@ def get_x_point_from_key(pub):
     return point[0]
 
 
+def gen_as_dictionary():
+    seed_phrase = pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128))
+    priv_key = serialize(generate_master_private_key(pg.gen_seed(seed_phrase)), prv_pbl='private', derivation_level='00')
+    address =  gen_address(prv_to_pub(priv_key))
+    
+    dic = {'seed_phrase': seed_phrase, 'private_key': priv_key, 'address': address}
+    
+    return dic   
+
 def gen_wallet():
     # TODO generate wallet information
     pvt_key = "blabla"
