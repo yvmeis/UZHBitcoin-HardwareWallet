@@ -1,7 +1,8 @@
 from enum import Enum
 import json
-from typing import Any, Dict, List
+from typing import Any, Dict, Iterable, List
 from getpass import getpass
+from src.exceptions.PinInvalidException import PinInvalidException
 
 from src.require_unlocked import require_unlocked
 from src.coins.coin import Coin
@@ -21,44 +22,21 @@ class HW:
         self.__pin = Pin()
         self.__status: Status = Status.LOCKED
         self.__coins: Dict[str, Coin] = {"bitcoin": Bitcoin()}
-
         self.__load_wallets()
-
-    def run(self):
-        commands: Dict[str, Any] = {
-            "create wallet": self.create_new_wallet,
-            "load wallet": self.load_wallet,
-            "list wallets": self.list_wallets,
-            "lock": self.lock,
-            "pay": self.handle_payment
-        }
-        self.unlock()
-        print("Welcome to PSBT - Probably Secure Bitcoin Tank")
-        while True:
-            action = input("What can I do for you? ")
-            if action not in commands.keys():
-                print(f"Commands are: {list(commands.keys())}")
-            else:
-                commands[action]()
-                print("")
 
     def __load_wallets(self):
         with open("./src/data/wallets.json", "r") as wallets_file:
             wallets: List[Dict[str, str]] = json.load(wallets_file)["wallets"]
             self.__wallets = {data["name"]: Wallet(**data) for data in wallets}
 
-    def unlock(self) -> None:
+    def unlock(self, pin) -> bool:
+        """ returns True on success False on failure """
         if not self.__pin.exists():
-            self.__pin.create()
-        for _ in range(3):
-            pin = getpass("Please enter your pin: ")
-            if self.__pin.check(pin):
-                print("Wallet unlocked.")
-                self.__status = Status.UNLOCKED
-                return
-            else:
-                print("Pin incorrect.")
-        print("Three incorrect attempts.")
+            raise PinInvalidException("Please create a pin first.")
+        if self.__pin.check(pin):
+            self.__status = Status.UNLOCKED
+            return True
+        return False
 
     def is_unlocked(self) -> bool:
         return self.__status == Status.UNLOCKED
@@ -79,38 +57,29 @@ class HW:
             except:
                 print("Please make sure the wallet name is correct.")
                 print("These wallets exist:")
-                self.list_wallets()
+                # self.list_wallets()
 
     @require_unlocked
     def lock(self) -> None:
         self.__pin = Pin()
         self.__status = Status.LOCKED
-        print("Hardware Wallet is locked.")
-        self.unlock()
 
     @require_unlocked
-    def create_new_wallet(self) -> None:
-        # Choose a name
-        name = input("Give your wallet a name: ")
-        while name in self.__wallets.keys():
-            name = input(
-                f"You already have a wallet named '{name}'. Please choose a different name: ")
-        # Choose a coin
-        while True:
-            print(
-                f"Currently these coins are supported: {str(list(self.__coins.keys()))}")
-            coin: str = input(
-                "Type the name of the coin your wallet should hold: ")
-            try:
-                wallet = Wallet(name, coin)
-                pin = getpass("Please enter your pin: ")
-                self.__pin.check(pin)
-                wallet.create(pin)
-                self.__wallets[name] = wallet
-                print("Wallet successfully created!")
-                break
-            except ValueError as e:
-                print(e)
+    def create_new_wallet(self, name: str, coin: str, pin: str) -> Wallet:
+        if name in self.__wallets.keys():
+            raise ValueError(f"A wallet named '{name}' already exists.")
+        if not self.__pin.check(pin):
+            raise ValueError(f"Pin incorrect.")
+
+        wallet = Wallet(name, coin)
+        wallet.create(pin)
+        self.__wallets[name] = wallet
+        return wallet
+
+    def recover_wallet(self) -> None:
+        """ Recovers a wallet using its seed phrase """
+        # TODO
+        pass
 
     @require_unlocked
     def load_wallet(self) -> None:
@@ -118,6 +87,11 @@ class HW:
         pass
 
     @require_unlocked
-    def list_wallets(self):
-        for wallet in self.__wallets.values():
-            print(wallet)
+    def get_wallets(self) -> Dict[str, Wallet]:
+        return self.__wallets
+
+    def get_pin(self) -> Pin:
+        return self.__pin
+
+    def get_supported_coins(self) -> Iterable[str]:
+        return self.__coins.keys()

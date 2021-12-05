@@ -3,16 +3,18 @@ from json.encoder import JSONEncoder
 from typing import Dict, List
 from src.coins.bitcoin import Bitcoin
 from src.coins.coin import Coin
-from src.apps.bitcoin.key_derivation import create_extended_private_key
+from src.apps.bitcoin.key_derivation import derive_child, prv_to_pub
 import src.apps.bitcoin.phrasegenerator as pg
 import os
-import random
+import io
+import qrcode
 
 
 class Wallet:
     """ Creates a wallet for coin of type coin. """
 
-    def __init__(self, name: str, coin: str, private_key=None):
+    def __init__(self, name: str, coin: str, address=None, public_key=None, **kwargs):
+        self.__address = address
         self.__coins_supported = {"bitcoin": Bitcoin()}
         self.__name = name
         if coin not in self.__coins_supported:
@@ -20,45 +22,14 @@ class Wallet:
                 f"Coin '{coin}' is not supported. So far only {self.__coins_supported.keys()}' are supported.")
         self.__coin = coin
 
-    def __create_seed_phrase(self) -> List[str]:
-        """ Generates a seed phrase, makes sure the user writes it down and tries to verify if the user wrote it down. """
-        def clearConsole(): return os.system(
-            'cls' if os.name in ('nt', 'dos') else 'clear')
-
-        words = pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128))
-        while True:
-            print("\nWrite down all the following words on paper and in the correct order. DO NOT STORE THEM DIGITALLY!")
-            print(
-                "They will be used to recover your wallet in case you ever loose access to it.")
-            print("\n" + ("*" * len(" ".join(words))))
-            print(" ".join(words))
-            print("*" * len(" ".join(words)) + "\n")
-            input("Press enter after you've finished writing all words down.")
-            clearConsole()
-            # check if user wrote down the words correctly
-            indices = list(range(len(words)))
-
-            # TODO uncomment after testing
-            # while True:
-            #     n = indices.pop(random.randint(0, len(indices)-1))
-            #     word = input(
-            #         f"Please type the word at place {n+1} and press enter: ")
-            #     if word != words[n]:
-            #         print("Word is not correct. Try again.")
-            #         word = input(
-            #             f"Please type the word at place {n} and press enter: ")
-            #     if word != words[n]:
-            #         print("Two incorrect tries. Showing words again.")
-            #         break
-            #     if len(indices) == 0:
-            #         return words
-            return words  # TODO remove later
-
     def create(self, pin: str) -> None:
+        # TODO remove hardcoded values and use generated values instead
         # create seed phrase
-        words: List[str] = self.__create_seed_phrase()
+        self.__seed_phrase: List[str] = ["apple"]
         # create private key
-        priv_key: bytes = create_extended_private_key(pg.gen_seed(words))
+        priv_key: str = 'kTjJJusN455paPH1FfmbHfnpaZjKFvyi1okTjJJusN455paPH1FfmbHfnpaZjKFvyi1okTjJJusN455paPH'
+        # create address
+        self.__address: str = '1FfmbHfnpaZjKFvyi1okTjJJusN455paPH'
         # store
         content = None
         with open("./src/data/wallets.json", "r") as wallets_file:
@@ -67,7 +38,8 @@ class Wallet:
             wallets.append({
                 "name": self.__name,
                 "coin": self.__coin,
-                "private_key": priv_key.decode()
+                "address": self.__address,
+                "private_key": priv_key
             })
             content["wallets"] = wallets
         with open("./src/data/wallets.json", "w") as f:
@@ -82,7 +54,18 @@ class Wallet:
         return self.__name == other.__name
 
     def __repr__(self) -> str:
-        return f"Name: {self.__name}, Coin: {self.__coin}"
+        qr = qrcode.QRCode()
+        qr.add_data(self.__address)
+        f = io.StringIO()
+        qr.print_ascii(out=f)
+        f.seek(0)
+        return f"Name: {self.__name}\nCoin: {self.__coin}\nAddress: {self.__address}\n{f.read()}"
 
     def __str__(self) -> str:
         return self.__repr__()
+
+    def get_seed_phrase(self) -> List[str]:
+        return self.__seed_phrase
+
+    def get_address(self) -> str:
+        return self.__address

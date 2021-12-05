@@ -1,0 +1,2 @@
+class PinIncorrectFormattedException(Exception):
+    pass
