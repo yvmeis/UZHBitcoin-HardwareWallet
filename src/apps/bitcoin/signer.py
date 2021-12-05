@@ -21,17 +21,14 @@ def sign_tx(tx_data, priv_key):
     return signature
 
 def serialize_tx(r, s, sighash_suffix = '01'):
-    binr = bin(r)[2:]
-    bins = bin(s)[2:]
-    if len(binr) % 4 != 0:
-        binr = binr.zfill(len(binr) + (len(binr)%4))
-    if len(bins) % 4 != 0:
-        bins = bins.zfill(len(bins) + (len(bins)%4))
-    
     r = hex(r)[2:]
+    r = r.zfill(64)
     r_byte = bytes.fromhex(r)
+    
     s = hex(s)[2:]
+    s = s.zfill(64)
     s_byte = bytes.fromhex(s)
+    
     length_r = hex(len(r_byte))[2:]
     length_s = hex(len(s_byte))[2:]
     
