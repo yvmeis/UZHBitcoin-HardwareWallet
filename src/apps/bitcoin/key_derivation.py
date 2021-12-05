@@ -90,6 +90,16 @@ def get_x_point_from_key(pub):
     point = to_pub_key._point_from_xpub(pub, secp256k1)
     return point[0]
 
+def gen_as_dictionary():
+    seed_phrase = pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128))
+    priv_key = serialize(generate_master_private_key(pg.gen_seed(seed_phrase)), prv_pbl='private', derivation_level='00')
+    address =  gen_address(prv_to_pub(priv_key))
+    
+    dic = {'seed_phrase': seed_phrase, 'private_key': priv_key, 'address': address}
+    
+    return dic
+    
+
 seed = pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))
 master = serialize(generate_master_private_key(
     seed), prv_pbl='private', derivation_level='00')
@@ -105,3 +115,5 @@ address = gen_address(pub)
 print('child 2 address: ')
 print(address)
 print(get_x_point_from_key(pub))
+print()
+print(gen_as_dictionary())
