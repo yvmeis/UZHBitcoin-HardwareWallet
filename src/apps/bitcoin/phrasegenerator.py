@@ -62,11 +62,4 @@ def normalize_string(txt: AnyStr) -> str:
     return unicodedata.normalize("NFKD", utxt)
 
 
-def main():
-    find_words(hash_entropy(gen_entropy(128), 128))
-    ma_seed = gen_seed(find_words(hash_entropy(gen_entropy(128), 128)))
 
-
-if __name__ == "__main__":
-    # stuff only to run when not called via 'import' here
-    main()
