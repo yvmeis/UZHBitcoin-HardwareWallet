@@ -74,6 +74,8 @@ def prv_to_pub(prv_key):
 
 def gen_address(pub_key):
     pub_key = bitcoin.bip32_deserialize(pub_key)[-1]
+    pub_key = pub_key.hex()
+    pub_key = bytes.fromhex(pub_key)
     hashed256 = ha.sha256(pub_key).digest()
     hashed160 = ha.ripemd160(hashed256).digest()
     hashed160v = bytes.fromhex('00') + hashed160  # 00 for mainnet bitcoin
