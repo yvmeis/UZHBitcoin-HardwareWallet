@@ -125,8 +125,3 @@ def gen_wallet():
         "addr": addr
     }
 
-
-
-
-
-

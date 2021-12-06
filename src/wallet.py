@@ -3,7 +3,7 @@ from json.encoder import JSONEncoder
 from typing import Dict, List
 from src.coins.bitcoin import Bitcoin
 from src.coins.coin import Coin
-from src.apps.bitcoin.key_derivation import derive_child, prv_to_pub
+from src.apps.bitcoin.key_derivation import derive_child, prv_to_pub, gen_as_dictionary
 import src.apps.bitcoin.phrasegenerator as pg
 import os
 import io
@@ -25,11 +25,13 @@ class Wallet:
     def create(self, pin: str) -> None:
         # TODO remove hardcoded values and use generated values instead
         # create seed phrase
-        self.__seed_phrase: List[str] = ["apple"]
+        wallet_information = gen_as_dictionary()
+        self.__seed_phrase: List[str] = wallet_information["seed_phrase"]
         # create private key
-        priv_key: str = 'kTjJJusN455paPH1FfmbHfnpaZjKFvyi1okTjJJusN455paPH1FfmbHfnpaZjKFvyi1okTjJJusN455paPH'
+        priv_key: str = wallet_information["private_key"].decode()
         # create address
-        self.__address: str = '1FfmbHfnpaZjKFvyi1okTjJJusN455paPH'
+        print(wallet_information["address"])
+        self.__address: str = wallet_information["address"].decode()
         # store
         content = None
         with open("./src/data/wallets.json", "r") as wallets_file:
