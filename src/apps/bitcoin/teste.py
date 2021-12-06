@@ -3,8 +3,9 @@ import key_derivation as kd
 import hash_collection as ha
 import hashlib
 import bitcoin
+import base58
 
-'''
+
 entropy = pg.hash_entropy(pg.gen_entropy(128), 128)
 words = pg.find_words(entropy)
 seed = pg.gen_seed(words)
@@ -21,27 +22,19 @@ pub2 = pub2.hex()
 print('child 2 public: ' + pub2)
 address = kd.gen_address(pub)
 print('child 2 address(byte): ' + str(address))
-'''
 
-pub_key = '0250863ad64a87ae8a2fe83c1af1a8403cb53f53e486d8511dad8a04887e5b2352'
-#pub_key = bitcoin.bip32_deserialize(pub_key)[-1]
-#pub_key = pub_key.hex()
+
+pub_key = '032c70b5429acab5b9f1822b94bdf062f3aea39e282fbc1af71a158d98b4f67a6a'
 pub_key = bytes.fromhex(pub_key)
 hashed256 = ha.sha256(pub_key).digest()
-print(hashed256.hex())
 hashed160 = ha.ripemd160(hashed256).digest()
-print(hashed160.hex())
 hashed160v = bytes.fromhex('00') + hashed160  # 00 for mainnet bitcoin
-print(hashed160v.hex())
 b58_hashed256_1 = ha.sha256(hashed160v).digest()
-print(b58_hashed256_1.hex())
 b58_hashed256_2 = ha.sha256(b58_hashed256_1).digest()
-print(b58_hashed256_2.hex())
 address_checksum = b58_hashed256_2[:4]
-print(address_checksum.hex())
 bin_btc_address = hashed160v + address_checksum
-print(bin_btc_address.hex())
-address = kd.encode_b58(bin_btc_address)
+address = base58.b58encode(bin_btc_address)
+
 print(address)
 
 
