@@ -1,7 +1,9 @@
-from . import phrasegenerator as pg
+#from . 
+import phrasegenerator as pg
 import base58
 import bitcoin
-from . import hash_collection as ha
+#from . 
+import hash_collection as ha
 from btclib import to_pub_key
 from btclib.curve import secp256k1
 import btclib
