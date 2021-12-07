@@ -1,11 +1,14 @@
-from . import phrasegenerator as pg
+#from . 
+import phrasegenerator as pg
 import base58
 import bitcoin
-from . import hash_collection as ha
+#from . 
+import hash_collection as ha
 from btclib import to_pub_key
 from btclib.curve import secp256k1
 import btclib
 from btclib import *
+import address_gen
 
 
 def generate_master_private_key(seed):  # seed as a bytestring
@@ -69,9 +72,15 @@ def prv_to_pub(prv_key):
     pub = btclib.bip32.xpub_from_xprv(prv_key)
     return pub
 
-
+#kaputt
+'''
 def gen_address(pub_key):
     pub_key = bitcoin.bip32_deserialize(pub_key)[-1]
+    pub_key = pub_key.hex()
+    pub_key = str(pub_key)
+    if isinstance(pub_key, str):
+        print(pub_key)
+    pub_key = bytes.fromhex(pub_key)
     hashed256 = ha.sha256(pub_key).digest()
     hashed160 = ha.ripemd160(hashed256).digest()
     hashed160v = bytes.fromhex('00') + hashed160  # 00 for mainnet bitcoin
@@ -79,9 +88,11 @@ def gen_address(pub_key):
     b58_hashed256_2 = ha.sha256(b58_hashed256_1).digest()
     address_checksum = b58_hashed256_2[:4]
     bin_btc_address = hashed160v + address_checksum
-    address = encode_b58(bin_btc_address)
-    return address
+    address = base58.b58encode(bin_btc_address)
+    
 
+    return address
+'''
 
 def get_y_point_from_key(pub):
     point = to_pub_key._point_from_xpub(pub, secp256k1)
@@ -95,30 +106,22 @@ def get_x_point_from_key(pub):
 
 def gen_as_dictionary():
     seed_phrase = pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128))
-    priv_key: bytes = serialize(generate_master_private_key(pg.gen_seed(
-        seed_phrase)), prv_pbl='private', derivation_level='00')
-    address: bytes = gen_address(prv_to_pub(priv_key))
+    priv_key = serialize(generate_master_private_key(pg.gen_seed(seed_phrase)), prv_pbl='private', derivation_level='00')
+    address =  address_gen.gen_address(prv_to_pub(priv_key))
+    
+    dic = {'seed_phrase': seed_phrase, 'private_key': priv_key, 'address': address}
+    
+    return dic   
 
-    dic = {'seed_phrase': seed_phrase,
-           'private_key': priv_key, 'address': address}
+def gen_wallet():
+    # TODO generate wallet information
+    pvt_key = "blabla"
+    seed_phrase = "banana apple ..."
+    addr = "someaddress"
 
-    return dic
+    return {
+        "pvt_key": pvt_key,
+        "seed_phrase": seed_phrase,
+        "addr": addr
+    }
 
-
-if __name__ == "main":
-    seed = pg.gen_seed(pg.find_words(
-        pg.hash_entropy(pg.gen_entropy(128), 128)))
-    master = serialize(generate_master_private_key(
-        seed), prv_pbl='private', derivation_level='00')
-    print(master)
-    der = derive_child(master, 0)
-    print('child 1: ' + der)
-    der_2 = derive_child(der, 0)
-    print('child 2: ' + der_2)
-    pub = prv_to_pub(der_2)
-    pub = bitcoin.bip32_deserialize(pub)[-1]
-    print(pub)
-    address = gen_address(pub)
-    print('child 2 address: ')
-    print(address)
-    print(get_x_point_from_key(pub))
