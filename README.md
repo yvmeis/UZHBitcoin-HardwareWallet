@@ -1,4 +1,4 @@
-# PSBT - Probably Secure Bitcoin Tank (temporary)
+# PSBT - Perfectly Secure Bitcoin Tank (temporary)
 ## Installation
     pipenv shell
     pipenv install
@@ -6,7 +6,7 @@
 ## Usage
 Make sure to have installed the dependencies first and that the environment is activated.
     pipenv shell
-    python3 run.py
+    python3 hw_cmd.py
 
 ## Future Development Goals
 The next steps in the project would be:

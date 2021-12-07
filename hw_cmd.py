@@ -21,7 +21,7 @@ class HWCmd:
         }
 
         self.unlock()
-        print("Welcome to PSBT - Probably Secure Bitcoin Tank")
+        print("Welcome to PSBT - Perfectly Secure Bitcoin Tank")
         while True:
             action = input("What can I do for you? ")
             if action not in commands.keys():
