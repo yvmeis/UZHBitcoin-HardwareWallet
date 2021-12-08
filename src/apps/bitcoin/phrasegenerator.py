@@ -5,13 +5,16 @@ from . import hash_collection as ha
 
 # length between 128 and 256. length has to be divisible by 32
 
-
-def gen_entropy(length):
+def gen_entropy(length: int) -> bytes:
+    '''generates a random bytestring of given length'''
+    
     entropy = os.urandom(length//8)
     return entropy
 
 
-def hash_entropy(entropy, length):
+def hash_entropy(entropy: bytes, length: int) -> bin:
+    '''hashes the given entropy'''
+    
     h = ha.sha256(entropy).hexdigest()
 
     b = bin(int(h, 16))[2:].zfill(256)
@@ -22,7 +25,9 @@ def hash_entropy(entropy, length):
     return mnemonic_bytes
 
 
-def find_words(binary):
+def find_words(binary: bin) -> list:
+    '''extracts mnemonic words from the word list'''
+    
     path = 'src/apps/bitcoin/english.txt'
     if not os.path.exists('src/apps/bitcoin/english.txt'):
         path = 'english.txt'
@@ -39,7 +44,9 @@ def find_words(binary):
     return phrase
 
 
-def gen_seed(words, passphrase=''):
+def gen_seed(words: list, passphrase='') -> bytes:
+    '''generates a seed from the mnemonic words and an optional passphrase'''
+    
     sentence = " ".join(words)
     password = normalize_string(sentence)
     passphrase = normalize_string(passphrase)
@@ -51,6 +58,8 @@ def gen_seed(words, passphrase=''):
 
 
 def normalize_string(txt: AnyStr) -> str:
+    '''normalizes given string'''
+    
     if isinstance(txt, bytes):
         utxt = txt.decode("utf8")
     elif isinstance(txt, str):
@@ -59,6 +68,4 @@ def normalize_string(txt: AnyStr) -> str:
         raise TypeError("String value expected")
 
     return unicodedata.normalize("NFKD", utxt)
-
-
 

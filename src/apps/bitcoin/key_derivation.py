@@ -7,9 +7,13 @@ from btclib.curve import secp256k1
 import btclib
 from btclib import *
 from . import address_gen
+from typing import Union
 
 
-def generate_master_private_key(seed):  # seed as a bytestring
+
+def generate_master_private_key(seed: bytes) -> tuple:
+    '''generates an extended master private key'''
+    
     key = "Bitcoin seed"
     key = key.encode(encoding='UTF-8')
     h = ha.hmacsha256(key, seed).digest()
@@ -19,8 +23,10 @@ def generate_master_private_key(seed):  # seed as a bytestring
     return extended_master_private_key
 
 
-def serialize(extended_key: tuple, prv_pbl: str, derivation_level: str, net='mainnet', fingerprint='00000000', childnumber='00000000'):
-    '''remove '0x' from all hex strings'''
+def serialize(extended_key: tuple, prv_pbl: str, derivation_level: str, net='mainnet', fingerprint='00000000', childnumber='00000000') -> bytes:
+    '''returns a serialized version of the given private key'''
+    
+    #remove '0x' from all hex strings 
     # extended_key: tuple with [0] = TYPE BYTE: key, [1] = TYPE BYTE: chain code
     # prv_bl = TYPE STRING: 'private'/'public';
     # derivation_level = TYPE HEXSTRING: 0x00 for master, 0x01 for level-1 derived, ...
@@ -53,19 +59,25 @@ def serialize(extended_key: tuple, prv_pbl: str, derivation_level: str, net='mai
     return encode_b58(serialized_key)
 
 
-def encode_b58(ser_key):
+def encode_b58(ser_key: bytes) -> bytes:
+    '''encodes given key in base 58'''
+    
     encoded_key = base58.b58encode(ser_key)
     return encoded_key
 
 
-def derive_child(prv_key, i):
-    #   2**31 <= i <= 2**32-1 ---> hardened key derivation
-    #   0 <= i <= 2**31-1 ---> non-hardened derivation
+def derive_child(prv_key: Union[bytes, str], i: int) -> str:
+    '''returns level i derived child private key from given private key
+    2**31 <= i <= 2**32-1 ---> hardened key derivation
+    0 <= i <= 2**31-1 ---> non-hardened key derivation'''
+    
     der = bitcoin.bip32_ckd(prv_key, i)
     return der
 
 
-def prv_to_pub(prv_key):
+def prv_to_pub(prv_key: str) -> str:
+    '''returns corresponding public key from given private key'''
+    
     #pub = bitcoin.bip32_privtopub(prv_key)
     pub = btclib.bip32.xpub_from_xprv(prv_key)
     return pub
@@ -92,17 +104,22 @@ def gen_address(pub_key):
     return address
 '''
 
-def get_y_point_from_key(pub):
+def get_y_point_from_key(pub: str) -> int:
+    '''returns y point from given public key'''
+    
     point = to_pub_key._point_from_xpub(pub, secp256k1)
     return point[1]
 
 
-def get_x_point_from_key(pub):
+def get_x_point_from_key(pub: str) -> int:
+    '''returns x point from given public key'''
+    
     point = to_pub_key._point_from_xpub(pub, secp256k1)
     return point[0]
 
 
-def gen_as_dictionary():
+def gen_as_dictionary() -> dict:
+    '''returns seedphrase, private key and address in dictionairy format'''
     seed_phrase = pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128))
     priv_key = serialize(generate_master_private_key(pg.gen_seed(seed_phrase)), prv_pbl='private', derivation_level='00')
     address =  address_gen.gen_address(prv_to_pub(priv_key))
@@ -111,7 +128,9 @@ def gen_as_dictionary():
     
     return dic   
 
-def gen_wallet():
+def gen_wallet() -> dict:
+    '''generates a wallet'''
+    
     # TODO generate wallet information
     pvt_key = "blabla"
     seed_phrase = "banana apple ..."
