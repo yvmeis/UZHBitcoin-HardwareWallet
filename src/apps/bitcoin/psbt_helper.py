@@ -3,6 +3,7 @@ import json
 import btclib.psbt, btclib.psbt_in, btclib.tx, btclib.tx_in, btclib.psbt_in, btclib.psbt_out
 import btclib.tests.generated_files
 from btclib.psbt import *
+import signer as sig
 
 
 def psbt_64_decoder(b64_psbt):
@@ -18,9 +19,19 @@ def finalize(psbt):
 
 #privkey in form: (03 572f9af6aebd7a6764264e17abdc4fc80cf359c11f81cbbe4ecf7a2c234a5f8f)
 #sig in serialized form
-def sign_psbt(psbt, priv_key, signature):
+def _sign_psbt(psbt, priv_key, signature):
     psbt.inputs[0].partial_sigs[priv_key] = signature
     assert psbt.inputs[0].partial_sigs[priv_key] == signature
+    
+def sign_psbt(psbt, priv_key):
+    tx_data = psbt_to_tx(psbt)
+    signature = sig.sign_tx(tx_data, priv_key)
+    serialized_signature = sig.serialize_tx(signature.r, signature.s)
+    signed_psbt = _sign_psbt(psbt, priv_key, serialized_signature)
+    return signed_psbt
+
+def psbt_to_tx(psbt):
+    return 'test'
 
 def psbt_64_encoder(psbt):
     encoded_psbt = psbt.b64encode()
@@ -33,7 +44,7 @@ priv_key = bytes.fromhex('03 572f9af6aebd7a6764264e17abdc4fc80cf359c11f81cbbe4ec
 signature = bytes.fromhex('3045022100e1ea1a3f9f790492eb18810f0e49e650b3397f91fa4a380c0649e3144943009e02202c36df002e2d1b211da0256b446b27541e330c46fd9386b59a161b4902e854cb01')
 print(psbt)
 print()
-sign_psbt(psbt, priv_key, signature)
+_sign_psbt(psbt, priv_key, signature)
 print(psbt)
 print()
 
