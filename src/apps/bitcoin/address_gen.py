@@ -1,13 +1,10 @@
-
 import hash_collection as ha
 import hashlib
 import bitcoin
 import base58
 
-
-
-
-def gen_address(pub_key):
+# generates a bitcoin address from a public key
+def gen_address(pub_key: bytes):
     pub_key = bitcoin.bip32_deserialize(pub_key)[-1]
     pub_key = pub_key.hex()
     pub_key = bytes.fromhex(pub_key)

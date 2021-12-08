@@ -1,6 +1,10 @@
 import hashlib, hmac
 
-def seed_hash(password, salt):
+'''
+A collection of the hashes used in the entire program
+'''
+
+def seed_hash(password: bytes, salt: bytes):
     iterations = 2048
     seed = hashlib.pbkdf2_hmac('sha512', password, salt, iterations)
     return seed
