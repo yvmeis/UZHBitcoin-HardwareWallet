@@ -11,6 +11,8 @@ words = pg.find_words(entropy)
 seed = pg.gen_seed(words)
 master = kd.serialize(kd.generate_master_private_key(
     seed), prv_pbl='private', derivation_level='00')
+print(type(master))
+'''
 print(entropy[:-4])
 print(words)
 print(seed.hex())
@@ -32,3 +34,4 @@ print('child 2 address(byte): ' + str(address))
 
 print('BBBBBBBBBBB')
 print(kd.gen_as_dictionary())
+'''
