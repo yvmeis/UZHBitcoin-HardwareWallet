@@ -1,8 +1,7 @@
 import os
 import unicodedata
 from typing import AnyStr
-#from . 
-import hash_collection as ha
+from . import hash_collection as ha
 
 # length between 128 and 256. length has to be divisible by 32
 

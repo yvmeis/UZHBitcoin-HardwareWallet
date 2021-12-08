@@ -3,7 +3,7 @@ import json
 import btclib.psbt, btclib.psbt_in, btclib.tx, btclib.tx_in, btclib.psbt_in, btclib.psbt_out
 import btclib.tests.generated_files
 from btclib.psbt import *
-import signer as sig
+from . import signer as sig
 
 
 def psbt_64_decoder(b64_psbt):
@@ -38,6 +38,7 @@ def psbt_64_encoder(psbt):
     return encoded_psbt
 
 ############TESTS#############
+'''
 psbt_tx_b64 ='cHNidP8BAHUCAAAAASaBcTce3/KF6Tet7qSze3gADAVmy7OtZGQXE8pCFxv2AAAAAAD+////AtPf9QUAAAAAGXapFNDFmQPFusKGh2DpD9UhpGZap2UgiKwA4fUFAAAAABepFDVF5uM7gyxHBQ8k0+65PJwDlIvHh7MuEwAAAQD9pQEBAAAAAAECiaPHHqtNIOA3G7ukzGmPopXJRjr6Ljl/hTPMti+VZ+UBAAAAFxYAFL4Y0VKpsBIDna89p95PUzSe7LmF/////4b4qkOnHf8USIk6UwpyN+9rRgi7st0tAXHmOuxqSJC0AQAAABcWABT+Pp7xp0XpdNkCxDVZQ6vLNL1TU/////8CAMLrCwAAAAAZdqkUhc/xCX/Z4Ai7NK9wnGIZeziXikiIrHL++E4sAAAAF6kUM5cluiHv1irHU6m80GfWx6ajnQWHAkcwRAIgJxK+IuAnDzlPVoMR3HyppolwuAJf3TskAinwf4pfOiQCIAGLONfc0xTnNMkna9b7QPZzMlvEuqFEyADS8vAtsnZcASED0uFWdJQbrUqZY3LLh+GFbTZSYG2YVi/jnF6efkE/IQUCSDBFAiEA0SuFLYXc2WHS9fSrZgZU327tzHlMDDPOXMMJ/7X85Y0CIGczio4OFyXBl/saiK9Z9R5E5CVbIBZ8hoQDHAXR8lkqASECI7cr7vCWXRC+B3jv7NYfysb3mk6haTkzgHNEZPhPKrMAAAAAAAAA'
 psbt = psbt_64_decoder(psbt_tx_b64)
 priv_key = bytes.fromhex('03 572f9af6aebd7a6764264e17abdc4fc80cf359c11f81cbbe4ecf7a2c234a5f8f')
@@ -52,3 +53,4 @@ f_psbt = finalize(psbt)
 print(f_psbt)
 print()
 print(psbt_64_encoder(f_psbt))
+'''

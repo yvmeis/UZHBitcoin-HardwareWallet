@@ -1,7 +1,7 @@
 import btclib
-import phrasegenerator as pg
-import key_derivation as kd
-import hash_collection as hc
+from . import phrasegenerator as pg
+from . import key_derivation as kd
+from . import hash_collection as hc
 import btclib.dsa
 import btclib.bip32
 from btclib.bip32 import _BIP32KeyData
@@ -90,6 +90,7 @@ def deserialize(key):
 
 ###################TESTS####################
 
+'''
 print()
 print()
 print('______SIGNER TESTING______')
@@ -125,3 +126,4 @@ print(deserialized_pub_key)
 print()
 print(deserialized_pub_key.key)
 print(scriptSig_serialization(serialized_sig, deserialized_pub_key))
+'''
