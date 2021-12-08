@@ -1,4 +1,4 @@
-import hash_collection as ha
+from . import hash_collection as ha
 import hashlib
 import bitcoin
 import base58
