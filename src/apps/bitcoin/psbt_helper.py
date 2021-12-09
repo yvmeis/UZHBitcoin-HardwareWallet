@@ -29,9 +29,7 @@ def finalize(psbt: Psbt) -> Psbt:
 
     return f_psbt
 
-#puts the signature into the corresponding spot in the psbt
-#privkey in form: (03 572f9af6aebd7a6764264e17abdc4fc80cf359c11f81cbbe4ecf7a2c234a5f8f)
-#sig in serialized form
+
 def _sign_psbt(psbt: Psbt, priv_key:str, signature: str):
     """ 
     puts the signature into the corresponding spot in the psbt;
@@ -58,22 +56,3 @@ def psbt_to_tx(psbt: Psbt) -> str:
     """Work in progress!! This function should extract the transaction data from a psbt"""
     
     return 'test'
-
-
-############TESTS#############
-'''
-psbt_tx_b64 ='cHNidP8BAHUCAAAAASaBcTce3/KF6Tet7qSze3gADAVmy7OtZGQXE8pCFxv2AAAAAAD+////AtPf9QUAAAAAGXapFNDFmQPFusKGh2DpD9UhpGZap2UgiKwA4fUFAAAAABepFDVF5uM7gyxHBQ8k0+65PJwDlIvHh7MuEwAAAQD9pQEBAAAAAAECiaPHHqtNIOA3G7ukzGmPopXJRjr6Ljl/hTPMti+VZ+UBAAAAFxYAFL4Y0VKpsBIDna89p95PUzSe7LmF/////4b4qkOnHf8USIk6UwpyN+9rRgi7st0tAXHmOuxqSJC0AQAAABcWABT+Pp7xp0XpdNkCxDVZQ6vLNL1TU/////8CAMLrCwAAAAAZdqkUhc/xCX/Z4Ai7NK9wnGIZeziXikiIrHL++E4sAAAAF6kUM5cluiHv1irHU6m80GfWx6ajnQWHAkcwRAIgJxK+IuAnDzlPVoMR3HyppolwuAJf3TskAinwf4pfOiQCIAGLONfc0xTnNMkna9b7QPZzMlvEuqFEyADS8vAtsnZcASED0uFWdJQbrUqZY3LLh+GFbTZSYG2YVi/jnF6efkE/IQUCSDBFAiEA0SuFLYXc2WHS9fSrZgZU327tzHlMDDPOXMMJ/7X85Y0CIGczio4OFyXBl/saiK9Z9R5E5CVbIBZ8hoQDHAXR8lkqASECI7cr7vCWXRC+B3jv7NYfysb3mk6haTkzgHNEZPhPKrMAAAAAAAAA'
-psbt = psbt_64_decoder(psbt_tx_b64)
-priv_key = bytes.fromhex('03 572f9af6aebd7a6764264e17abdc4fc80cf359c11f81cbbe4ecf7a2c234a5f8f')
-signature = bytes.fromhex('3045022100e1ea1a3f9f790492eb18810f0e49e650b3397f91fa4a380c0649e3144943009e02202c36df002e2d1b211da0256b446b27541e330c46fd9386b59a161b4902e854cb01')
-print(psbt)
-print()
-_sign_psbt(psbt, priv_key, signature)
-print(psbt)
-print()
-
-f_psbt = finalize(psbt)
-print(f_psbt)
-print()
-print(psbt_64_encoder(f_psbt))
-'''
