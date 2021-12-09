@@ -8,8 +8,9 @@ from btclib.bip32 import _BIP32KeyData
 from dataclasses_json import DataClassJsonMixin, config
 
 
-# creates the R and S values, given the transaction data and the private key
 def sign_tx(tx_data: str, priv_key: bytes):
+    """creates the R and S values, given the transaction data and the private key"""
+    
     if isinstance(tx_data, bytes):
         m = tx_data.decode('utf8')
     elif isinstance(tx_data, str):
@@ -20,8 +21,10 @@ def sign_tx(tx_data: str, priv_key: bytes):
     
     return signature
 
-#creates a serialized signature out of the R and S values. Can accept different sighash suffixes
-def serialize_tx(r: int, s: int, sighash_suffix = '01'):
+
+def serialize_tx(r: int, s: int, sighash_suffix = '01') -> str:
+    """creates a serialized signature out of the R and S values. Can accept different sighash suffixes"""
+    
     r = hex(r)[2:]
     r = r.zfill(64)
     r_byte = bytes.fromhex(r)
@@ -42,8 +45,10 @@ def serialize_tx(r: int, s: int, sighash_suffix = '01'):
     
     return serialized_signature
     
-#creates the script Sig serialization out of a serialized signature and the public key
-def scriptSig_serialization(serialized_signature: str, pub_key: bytes):
+
+def scriptSig_serialization(serialized_signature: str, pub_key: bytes) -> str:
+    """creates the script Sig serialization out of a serialized signature and the public key"""
+    
     sig_byte = bytes.fromhex(serialized_signature)
     sig_length = hex(len(sig_byte))[2:]
     #pub_byte = bytes.fromhex(pub_key)
@@ -52,20 +57,25 @@ def scriptSig_serialization(serialized_signature: str, pub_key: bytes):
     scriptSig = sig_length + serialized_signature + pub_key_length + pub_key.key.hex()
     return scriptSig
     
-#generates a temporary private key
-def gen_ephemeral_priv_key():  
+
+def gen_ephemeral_priv_key() -> bytes:  
+    """generates a temporary private key"""
+    
     ephemeral_priv_key = kd.serialize(kd.generate_master_private_key(pg.gen_seed(pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128)))), prv_pbl='private', derivation_level='00')
     
     return ephemeral_priv_key
 
-#generates a temporary public key
-def gen_ephemeral_key_pair(priv_key: bytes):
+
+def gen_ephemeral_key_pair(priv_key: bytes) -> tuple:
+    """generates a temporary public key"""
+    
     ephemeral_pub_key = kd.prv_to_pub(priv_key)
     
     return (priv_key, ephemeral_pub_key)
 
-# DO NOT RUN!! This function is a work in progress!!
-def signing(ephemeral_key_pair: tuple, signing_priv_key: bytes, transaction_data: str, prime_order_EC = int('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141', 16)):
+
+def signing(ephemeral_key_pair: tuple, signing_priv_key: bytes, transaction_data: str, prime_order_EC = int('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141', 16)) -> tuple:
+    """DO NOT RUN!! This function is a work in progress!!"""
     
     R = kd.get_x_point_from_key(ephemeral_key_pair[1])
     
@@ -73,10 +83,9 @@ def signing(ephemeral_key_pair: tuple, signing_priv_key: bytes, transaction_data
     
     return (R, S)
 
-#DO NOT RUN!! This function is a work in progress!!
-def create_S(ephemeral_priv_key: bytes, x_point: int, signing_priv_key: bytes, transaction_data: str, prime_order_EC: int):
-    #' k-1 (Hash(m) + dA * R) mod n'
-    
+
+def create_S(ephemeral_priv_key: bytes, x_point: int, signing_priv_key: bytes, transaction_data: str, prime_order_EC: int) -> float:
+    """DO NOT RUN!! This function is a work in progress!!    k-1 (Hash(m) + dA * R) mod n"""    
     
     hashm = int(hc.sha256(transaction_data.encode('utf8')).hexdigest(), 16)
     k1 = int.from_bytes(ephemeral_priv_key, 'big')**(-1)
@@ -87,8 +96,10 @@ def create_S(ephemeral_priv_key: bytes, x_point: int, signing_priv_key: bytes, t
     
     return S
 
-# deserializes a key
+
 def deserialize(key: bytes):
+    """deserializes a key"""
+    
     décodée = btclib.bip32.BIP32KeyData.b58decode(key)
     return décodée
 
