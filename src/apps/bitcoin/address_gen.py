@@ -18,6 +18,5 @@ def gen_address(pub_key: bytes) -> bytes:
     address_checksum = b58_hashed256_2[:4]
     bin_btc_address = hashed160v + address_checksum
     address = base58.b58encode(bin_btc_address)
-    print(address)
     return address
     
