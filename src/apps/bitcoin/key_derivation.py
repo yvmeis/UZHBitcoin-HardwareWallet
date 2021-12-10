@@ -129,7 +129,7 @@ def gen_child(key, i) -> dict:
     return dic   
 
 
-def gen_wallet() -> bytes:
+def gen_wallet() -> dict:
     '''generates a root key and its seed phrase'''
     
     words = pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128))
