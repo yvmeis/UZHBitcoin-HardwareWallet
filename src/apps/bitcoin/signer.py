@@ -91,8 +91,7 @@ def create_S(ephemeral_priv_key: bytes, x_point: int, signing_priv_key: bytes, t
     k1 = int.from_bytes(ephemeral_priv_key, 'big')**(-1)
     dA = int.from_bytes(signing_priv_key, 'big')
     S1 = (hashm + dA * x_point)
-    S2 = S1 % prime_order_EC
-    S = k1 *S2
+    S = k1 *S1 % prime_order_EC
     
     return S
 
