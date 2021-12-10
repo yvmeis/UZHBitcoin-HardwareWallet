@@ -47,7 +47,8 @@ def sign_psbt(psbt: Psbt, priv_key: bytes) -> Psbt:
     tx_data = psbt_to_tx(psbt)
     signature = sig.sign_tx(tx_data, priv_key)
     serialized_signature = sig.serialize_tx(signature.r, signature.s)
-    _sign_psbt(psbt, priv_key, serialized_signature)
+    deserialized_key = sig.deserialize(priv_key).key.hex()
+    _sign_psbt(psbt, deserialized_key, serialized_signature)
     finalized_psbt = finalize(psbt)
     return finalized_psbt
 
