@@ -150,13 +150,11 @@ class HWCmd:
                 return
 
             # create signature
-            # try:
-            self.hw.handle_payment(name, tx)
-            break
-            # except Exception as e:
-            #     # TODO change error message
-            #     print("Following Error occured:", e)
-            #     break
+            try:
+                self.hw.handle_payment(name, tx)
+                break
+            except Exception as e:
+                print("Something went wrong!")
 
         print("Added signature successfully.")
 

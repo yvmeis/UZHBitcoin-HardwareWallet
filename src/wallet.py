@@ -1,11 +1,11 @@
 import json
 from json.encoder import JSONEncoder
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from btclib.psbt import Psbt
 from src.coins.bitcoin import Bitcoin
 from src.coins.coin import Coin
-from src.apps.bitcoin.key_derivation import derive_child, prv_to_pub, gen_as_dictionary
+from src.apps.bitcoin.key_derivation import derive_child, prv_to_pub, gen_wallet, gen_child
 import src.apps.bitcoin.phrasegenerator as pg
 import os
 import io
@@ -15,24 +15,31 @@ import qrcode
 class Wallet:
     """ Creates a wallet for coin of type coin. """
 
-    def __init__(self, name: str, coin: str, address=None, public_key=None, private_key=None, **kwargs):
+    def __init__(self, name: str, coin: str, address=None, public_key=None, private_key=None, root_key=None, **kwargs):
         self.__address = address
         self.__coins_supported = {"bitcoin": Bitcoin()}
         self.__name = name
-        self.__priv_key: str = private_key
+        self.__priv_key = private_key
         if coin not in self.__coins_supported:
             raise ValueError(
                 f"Coin '{coin}' is not supported. So far only {list(self.__coins_supported.keys())}' are supported.")
         self.__coin = coin
 
-    def create(self, pin: str) -> None:
+    def create(self, pin: str, root_key=None) -> None:
         """ Creates and stores wallet information """
-        wallet_information = gen_as_dictionary()
+
+        # get wallet information
+        wallet_information = gen_wallet()
         self.__seed_phrase: List[str] = wallet_information["seed_phrase"]
-        # create private key
-        priv_key: str = wallet_information["private_key"].decode()
-        # create address
-        self.__address: str = wallet_information["address"].decode()
+        if root_key:
+            self.__root_key = root_key
+        else:
+            self.__root_key: str = wallet_information["root_key"].decode()
+        # TODO always create a random key pair
+        children: Dict[str, Any] = gen_child(self.__root_key, 0)
+        self.__priv_key: str = children["private_key"]
+        self.__address: str = children["address"].decode()
+
         # store
         content = None
         with open("./src/data/wallets.json", "r") as wallets_file:
@@ -42,7 +49,8 @@ class Wallet:
                 "name": self.__name,
                 "coin": self.__coin,
                 "address": self.__address,
-                "private_key": priv_key
+                "private_key": self.__priv_key,
+                "root_key": self.__root_key
             })
             content["wallets"] = wallets
         with open("./src/data/wallets.json", "w") as f:

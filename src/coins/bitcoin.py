@@ -16,10 +16,9 @@ from btclib.psbt import (
 
 class Bitcoin(Coin):
 
-    def sign_transaction(self, tx: str, private_key: bytes) -> Psbt:
+    def sign_transaction(self, tx: str, private_key: str) -> Psbt:
         psbt = Psbt.b64decode(tx)
-        return sign_psbt(tx, private_key)
-        # return Psbt()
+        return sign_psbt(psbt, private_key.encode())
 
     def get_transaction_info(self, tx) -> str:
         psbt_raw = Psbt.b64decode(tx)
