@@ -154,7 +154,13 @@ class HWCmd:
                 self.hw.handle_payment(name, tx)
                 break
             except Exception as e:
-                print("Something went wrong!")
+                print(
+                    "Something unexpected went wrong! Please check your input for correctness.")
+                answer = input(
+                    "If you want to cancel your payment type n and hit the enter key.")
+                if answer == "n":
+                    print("Cancelling payment.")
+                    return
 
         print("Added signature successfully.")
 
