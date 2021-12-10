@@ -118,27 +118,27 @@ def get_x_point_from_key(pub: str) -> int:
     return point[0]
 
 
-def gen_as_dictionary() -> dict:
+def gen_child(key, i) -> dict:
     '''returns seedphrase, private key and address in dictionairy format'''
-    seed_phrase = pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128))
-    priv_key = serialize(generate_master_private_key(pg.gen_seed(seed_phrase)), prv_pbl='private', derivation_level='00')
+    
+    priv_key = derive_child(key, i)
     address =  address_gen.gen_address(prv_to_pub(priv_key))
     
-    dic = {'seed_phrase': seed_phrase, 'private_key': priv_key, 'address': address}
+    dic = {'private_key': priv_key, 'address': address}
     
     return dic   
 
-def gen_wallet() -> dict:
-    '''generates a wallet'''
-    
-    # TODO generate wallet information
-    pvt_key = "blabla"
-    seed_phrase = "banana apple ..."
-    addr = "someaddress"
 
-    return {
-        "pvt_key": pvt_key,
-        "seed_phrase": seed_phrase,
-        "addr": addr
-    }
+def gen_wallet() -> dict:
+    '''generates a root key and its seed phrase'''
+    
+    words = pg.find_words(pg.hash_entropy(pg.gen_entropy(128), 128))
+    root_key = serialize(generate_master_private_key(pg.gen_seed(words)), prv_pbl='private', derivation_level='00')
+    address =  address_gen.gen_address(prv_to_pub(root_key))
+    
+    dic = {'seed_phrase': words, 'root_private_key': root_key}
+    
+    return dic   
+
+
 
