@@ -1,3 +1,10 @@
 {
-    "wallets": []
+    "wallets": [
+        {
+            "name": "Test",
+            "coin": "bitcoin",
+            "address": "12YUZ4PJKHCXTJS3jrf7AonYvMNmCBE8Pb",
+            "private_key": "7JJRGiiVuW9DCAkyM9azBmh8RCcGv2aiVe43i7ZryucDuX6yWDhMZ2oyK1HruuGZkSCsM3dvdjGfQJGbtTJwBhtzQHwLv1nxQnJUdVcqar264NwtKXMS3"
+        }
+    ]
 }

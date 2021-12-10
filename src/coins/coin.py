@@ -16,7 +16,7 @@ class Coin(ABC):
 
     @abstractmethod
     def get_transaction_info(self, tx):
-        """ Displays transaction details. Currently assumes the transaction to be encoded as b64. """
+        """ Provides transaction data like receiving address and amount sent. Currently assumes the transaction to be encoded as b64. """
         pass
 
     def get_corfirmation_message(self) -> bool:

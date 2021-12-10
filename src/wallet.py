@@ -1,6 +1,8 @@
 import json
 from json.encoder import JSONEncoder
 from typing import Dict, List
+
+from btclib.psbt import Psbt
 from src.coins.bitcoin import Bitcoin
 from src.coins.coin import Coin
 from src.apps.bitcoin.key_derivation import derive_child, prv_to_pub, gen_as_dictionary
@@ -13,24 +15,23 @@ import qrcode
 class Wallet:
     """ Creates a wallet for coin of type coin. """
 
-    def __init__(self, name: str, coin: str, address=None, public_key=None, **kwargs):
+    def __init__(self, name: str, coin: str, address=None, public_key=None, private_key=None, **kwargs):
         self.__address = address
         self.__coins_supported = {"bitcoin": Bitcoin()}
         self.__name = name
+        self.__priv_key = private_key
         if coin not in self.__coins_supported:
             raise ValueError(
-                f"Coin '{coin}' is not supported. So far only {self.__coins_supported.keys()}' are supported.")
+                f"Coin '{coin}' is not supported. So far only {list(self.__coins_supported.keys())}' are supported.")
         self.__coin = coin
 
     def create(self, pin: str) -> None:
-        # TODO remove hardcoded values and use generated values instead
-        # create seed phrase
+        """ Creates and stores wallet information """
         wallet_information = gen_as_dictionary()
         self.__seed_phrase: List[str] = wallet_information["seed_phrase"]
         # create private key
         priv_key: str = wallet_information["private_key"].decode()
         # create address
-        print(wallet_information["address"])
         self.__address: str = wallet_information["address"].decode()
         # store
         content = None
@@ -47,10 +48,9 @@ class Wallet:
         with open("./src/data/wallets.json", "w") as f:
             f.write(json.dumps(content))
 
-        # encrypt private key with pin
-
-    def process_transaction(self, tx):
-        self.__coins_supported[self.__coin].handle_transaction(tx)
+    def process_transaction(self, tx: str):
+        return self.__coins_supported[self.__coin].sign_transaction(
+            tx, self.__priv_key)
 
     def __eq__(self, other) -> bool:
         return self.__name == other.__name
@@ -71,3 +71,9 @@ class Wallet:
 
     def get_address(self) -> str:
         return self.__address
+
+    def get_coin(self) -> Coin:
+        return self.__coins_supported[self.__coin]
+
+    def get_coin_str(self) -> str:
+        return self.__coin

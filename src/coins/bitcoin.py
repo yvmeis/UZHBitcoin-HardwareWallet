@@ -1,5 +1,8 @@
 from json.encoder import JSONEncoder
+
+from btclib import psbt
 from src.coins.coin import Coin
+from src.apps.bitcoin.psbt_helper import sign_psbt
 
 from btclib.psbt import (
     PSBT_DELIMITER,
@@ -13,8 +16,10 @@ from btclib.psbt import (
 
 class Bitcoin(Coin):
 
-    def sign_transaction(self):
-        pass
+    def sign_transaction(self, tx: str, private_key: bytes) -> Psbt:
+        psbt = Psbt.b64decode(tx)
+        return sign_psbt(tx, private_key)
+        # return Psbt()
 
     def get_transaction_info(self, tx) -> str:
         psbt_raw = Psbt.b64decode(tx)

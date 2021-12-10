@@ -1,0 +1,2 @@
+class WalletNotFoundException(Exception):
+    pass

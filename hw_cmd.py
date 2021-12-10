@@ -3,11 +3,19 @@ from typing import Dict, Any, List
 from getpass import getpass
 import random
 
+from btclib.psbt import Psbt
+from src.coins.coin import Coin
+from src.exceptions.WalletNotFoundException import WalletNotFoundException
+
 from src.hw import HW
+from src.wallet import Wallet
 
 
 class HWCmd:
     """ This class is meant for users to interact with the wallet. """
+
+    def clearConsole(self):
+        return os.system('cls' if os.name in ('nt', 'dos') else 'clear')
 
     def run(self) -> None:
         self.hw = HW()
@@ -51,8 +59,6 @@ class HWCmd:
 
     def __check_seed_phrase(self, seed_phrase: List[str]) -> List[str]:
         """ Generates a seed phrase, makes sure the user writes it down and tries to verify if the user wrote it down. """
-        def clearConsole(): return os.system(
-            'cls' if os.name in ('nt', 'dos') else 'clear')
 
         while True:
             print("\nWrite down all the following words on paper and in the correct order. DO NOT STORE THEM DIGITALLY!")
@@ -62,7 +68,7 @@ class HWCmd:
             print(" ".join(seed_phrase))
             print("*" * len(" ".join(seed_phrase)) + "\n")
             input("Press enter after you've finished writing all words down.")
-            clearConsole()
+            self.clearConsole()
             # check if user wrote down the seed_phrase correctly
             indices = list(range(len(seed_phrase)))
 
@@ -109,10 +115,50 @@ class HWCmd:
     def lock(self) -> None:
         self.hw.lock()
         print("Hardware wallet is locked.")
+        self.clearConsole()
         self.unlock()
 
     def handle_payment(self):
-        pass
+        """ Gets transaction information and signs it. """
+        # read psbt file
+        while not os.path.exists("../psbt"):
+            answer = input(
+                "Make sure a file called 'psbt' containing the psbt is in the same folder as your hardware wallet software is in. Type 'y' to proceed and 'n' to cancel the payment.")
+            if answer == "n":
+                print("Cancelling payment.")
+                return
+        with open("../psbt", "r") as psbt_f:
+            tx = psbt_f.read()
+        while True:
+
+            # get wallet
+            print(f"Wallets names: {list(self.hw.get_wallets().keys())}")
+            name = input(
+                "Type the name of the wallet you wish to use for your payment. ")
+            try:
+                wallet: Wallet = self.hw.get_wallet(name)
+            except WalletNotFoundException as e:
+                print(e)
+                continue
+
+            # verify payment
+            coin: Coin = wallet.get_coin()
+            print(coin.get_transaction_info(tx))
+            answer = input("Proceed (y/n)?")
+            if answer != "y":
+                print("Cancelling signing process.")
+                return
+
+            # create signature
+            try:
+                self.hw.handle_payment(name, tx)
+                break
+            except Exception as e:
+                # TODO change error message
+                print("Following Error occured:", e)
+                break
+
+        print("Added signature successfully.")
 
 
 hw_cmd = HWCmd()

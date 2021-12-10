@@ -3,6 +3,7 @@ import json
 from typing import Any, Dict, Iterable, List
 from getpass import getpass
 from src.exceptions.PinInvalidException import PinInvalidException
+from src.exceptions.WalletNotFoundException import WalletNotFoundException
 
 from src.require_unlocked import require_unlocked
 from src.coins.coin import Coin
@@ -41,23 +42,8 @@ class HW:
     def is_unlocked(self) -> bool:
         return self.__status == Status.UNLOCKED
 
-    def handle_payment(self) -> None:
-        if len(self.__wallets.keys()) < 1:
-            print("You first have to create a wallet before you can pay with it.")
-            return
-
-        while True:
-            wallet_name = input(
-                "Type the name of the wallet you want to use for the payment: ")
-            if wallet_name not in self.__wallets.keys():
-                print(f"Wallet with name {wallet_name} doesn't exist!")
-            try:
-                # self.__wallets[wallet_name].process_transaction(None)  # TODO
-                break
-            except:
-                print("Please make sure the wallet name is correct.")
-                print("These wallets exist:")
-                # self.list_wallets()
+    def handle_payment(self, name: str, tx: str) -> None:
+        self.get_wallet(name).process_transaction(tx)
 
     @require_unlocked
     def lock(self) -> None:
@@ -76,13 +62,14 @@ class HW:
         self.__wallets[name] = wallet
         return wallet
 
+    def get_wallet(self, name: str) -> Wallet:
+        """ Raises WalletNotFoundException if there is no wallet with that name."""
+        if name in self.__wallets.keys():
+            return self.__wallets[name]
+        raise WalletNotFoundException("No wallet with this name exists.")
+
     def recover_wallet(self) -> None:
         """ Recovers a wallet using its seed phrase """
-        # TODO
-        pass
-
-    @require_unlocked
-    def load_wallet(self) -> None:
         # TODO
         pass
 

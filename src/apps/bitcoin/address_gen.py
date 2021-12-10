@@ -4,6 +4,8 @@ import bitcoin
 import base58
 
 # generates a bitcoin address from a public key
+
+
 def gen_address(pub_key: bytes):
     pub_key = bitcoin.bip32_deserialize(pub_key)[-1]
     pub_key = pub_key.hex()
@@ -16,6 +18,4 @@ def gen_address(pub_key: bytes):
     address_checksum = b58_hashed256_2[:4]
     bin_btc_address = hashed160v + address_checksum
     address = base58.b58encode(bin_btc_address)
-    print(address)
     return address
-    
