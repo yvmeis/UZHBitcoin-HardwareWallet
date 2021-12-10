@@ -5,6 +5,12 @@
             "coin": "bitcoin",
             "address": "12YUZ4PJKHCXTJS3jrf7AonYvMNmCBE8Pb",
             "private_key": "7JJRGiiVuW9DCAkyM9azBmh8RCcGv2aiVe43i7ZryucDuX6yWDhMZ2oyK1HruuGZkSCsM3dvdjGfQJGbtTJwBhtzQHwLv1nxQnJUdVcqar264NwtKXMS3"
+        },
+        {
+            "name": "Testcase",
+            "coin": "bitcoin",
+            "address": "this is an invalid address",
+            "private_key": "03572f9af6aebd7a6764264e17abdc4fc80cf359c11f81cbbe4ecf7a2c234a5f8f"
         }
     ]
 }

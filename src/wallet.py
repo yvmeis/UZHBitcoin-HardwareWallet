@@ -19,7 +19,7 @@ class Wallet:
         self.__address = address
         self.__coins_supported = {"bitcoin": Bitcoin()}
         self.__name = name
-        self.__priv_key = private_key
+        self.__priv_key: str = private_key
         if coin not in self.__coins_supported:
             raise ValueError(
                 f"Coin '{coin}' is not supported. So far only {list(self.__coins_supported.keys())}' are supported.")

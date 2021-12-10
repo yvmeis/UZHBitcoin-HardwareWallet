@@ -14,7 +14,7 @@ from src.wallet import Wallet
 class HWCmd:
     """ This class is meant for users to interact with the wallet. """
 
-    def clearConsole(self):
+    def clear_console(self):
         return os.system('cls' if os.name in ('nt', 'dos') else 'clear')
 
     def run(self) -> None:
@@ -68,7 +68,7 @@ class HWCmd:
             print(" ".join(seed_phrase))
             print("*" * len(" ".join(seed_phrase)) + "\n")
             input("Press enter after you've finished writing all words down.")
-            self.clearConsole()
+            self.clear_console()
             # check if user wrote down the seed_phrase correctly
             indices = list(range(len(seed_phrase)))
 
@@ -115,7 +115,7 @@ class HWCmd:
     def lock(self) -> None:
         self.hw.lock()
         print("Hardware wallet is locked.")
-        self.clearConsole()
+        self.clear_console()
         self.unlock()
 
     def handle_payment(self):
@@ -150,13 +150,13 @@ class HWCmd:
                 return
 
             # create signature
-            try:
-                self.hw.handle_payment(name, tx)
-                break
-            except Exception as e:
-                # TODO change error message
-                print("Following Error occured:", e)
-                break
+            # try:
+            self.hw.handle_payment(name, tx)
+            break
+            # except Exception as e:
+            #     # TODO change error message
+            #     print("Following Error occured:", e)
+            #     break
 
         print("Added signature successfully.")
 
